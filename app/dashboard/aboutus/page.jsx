@@ -263,7 +263,7 @@ function AboutUs() {
               viewport={{ once: true }}
               className="mb-6 md:mb-8 first-letter:text-4xl md:first-letter:text-5xl first-letter:font-bold first-letter:text-[#1b3a34] first-letter:mr-2 md:first-letter:mr-3 first-letter:float-left shadow-sm p-4 md:p-6 bg-orange-50/30 rounded-xl md:rounded-2xl text-sm md:text-base"
             >
-              VetMeds was born from a simple yet profound realization in 2023. Founded by Omkar M. VeershaivWangi, the spark was ignited during a late-night emergency when immediate veterinary advice was unreachable. This personal struggle highlighted a global gap in pet healthcare accessibility.
+              VetMeds was born from a simple yet profound realization in 2024. Founded by Saeed I. Sande , the spark was ignited during a late-night emergency when immediate veterinary advice was unreachable. This personal struggle highlighted a global gap in pet healthcare accessibility.
             </motion.p>
 
             <motion.p
@@ -273,7 +273,7 @@ function AboutUs() {
               viewport={{ once: true }}
               className="mb-6 md:mb-8 text-sm md:text-base leading-relaxed"
             >
-              What started as a response to a personal challenge quickly evolved into a mission. Omkar brought together a diverse collective of veterinary experts, data scientists, and UI/UX designers—all united by their love for animals. Together, they engineered a platform that doesn't just provide data, but offers genuine care and calculated health guidance.
+              What started as a response to a personal challenge quickly evolved into a mission. Vetmeds Team brought together a diverse collective of veterinary experts, data scientists, and UI/UX designers—all united by their love for animals. Together, they engineered a platform that doesn't just provide data, but offers genuine care and calculated health guidance.
             </motion.p>
 
             <motion.div
@@ -297,8 +297,8 @@ function AboutUs() {
                   <Image src="/whitelogo.png" alt="Founder Logo" width={100} height={100} className="object-contain drop-shadow-xl" />
                 </div>
                 <div className="flex flex-col items-center md:items-start">
-                  <div className="font-bold text-xl md:text-3xl tracking-tight">Omkar M. VeershaivWangi</div>
-                  <div className="text-base md:text-lg opacity-80 font-medium">Founder, VetMeds</div>
+                  <div className="font-bold text-xl md:text-3xl tracking-tight">Saeed I. Sande </div>
+                  <div className="text-base md:text-lg opacity-80 font-medium">Founder, VetMeds Pvt ltd. </div>
                   <div className="mt-2 w-12 h-1 bg-orange-400 rounded-full group-hover:w-40 transition-all duration-1000 mx-auto md:mx-0" />
                 </div>
               </div>

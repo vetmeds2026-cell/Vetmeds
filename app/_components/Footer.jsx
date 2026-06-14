@@ -73,21 +73,21 @@ function Footer() {
           <div className="space-y-2">
             <h4 className="text-sm font-semibold text-[#1b3a34]">Contact Us</h4>
             <p className="text-xs text-gray-600">
-              Vet Meds Care Center,<br />
-              Karve Naka,<br />
-              Karad,<br />
-              Maharashtra, 415110
+              @ VetMeds Pvt ltd.  <br />
+              Urun Ishwarpur , <br />
+              Sangli, <br />
+              Maharashtra, 415 409
             </p>
             <p className="text-xs text-gray-600">
               Email: vetmeds2026@gmail.com<br />
-              Phone: (123) 456-7890
+              Phone: 91+ 8625968424
             </p>
           </div>
         </div>
         <div className="mt-4 pt-2 border-t border-gray-200">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-xs text-gray-500 mb-1 sm:mb-0">
-              © {new Date().getFullYear()} VetMeds. All rights reserved.
+              © {new Date().getFullYear()} VetMeds. All rights reserved 2026.
             </p>
             <div className="flex space-x-2 text-xs text-gray-500">
               <Link href="#" className="hover:text-[#1b3a34] transition-colors">

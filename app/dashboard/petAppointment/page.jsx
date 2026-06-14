@@ -15,22 +15,24 @@ export default async function AppointmentPage() {
     userEmail = user?.emailAddresses?.[0]?.emailAddress;
 
     if (userEmail) {
-      // Fetch appointments
+      
       const data = await db.select().from(appointments)
         .where(eq(appointments.ownerEmail, userEmail))
         .orderBy(desc(appointments.createdAt));
 
-      // Fetch collected points for this user to link with appointments
+      
       const pointsData = await db.select().from(collectedPoints)
         .where(eq(collectedPoints.userEmail, userEmail));
-        
-      // Safely serialize data and link points
+
+      
       initialAppointments = data.map(apt => {
-        // Find if there's a matching point record (match by petName and issue)
-        const match = pointsData.find(p => 
-          p.petName === apt.petName && 
-          (p.petIssue === apt.petProblem || apt.petProblem.includes(p.petIssue))
-        );
+        
+        const match = pointsData.find(p => p.appointmentId === apt.id) ||
+          pointsData.find(p =>
+            !p.appointmentId &&
+            p.petName === apt.petName &&
+            (p.petIssue === apt.petProblem || apt.petProblem.includes(p.petIssue))
+          );
 
         return {
           ...apt,
@@ -45,7 +47,7 @@ export default async function AppointmentPage() {
   }
 
   return (
-    <AppointmentClient 
+    <AppointmentClient
       initialAppointments={initialAppointments}
       userEmail={userEmail}
     />

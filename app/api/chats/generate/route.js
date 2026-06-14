@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// POST - Generate AI Response with Vision Support
+
 export async function POST(request) {
   try {
-    // Validate request
+    
     const contentType = request.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request) {
       );
     }
 
-    // Initialize Gemini
+    
     const apiKey = process.env.NEXT_PUBLIC_CHATBOT_KEY;
     if (!apiKey) {
       throw new Error('Chatbot API key not configured. Please add NEXT_PUBLIC_CHATBOT_KEY to your .env file');
@@ -31,7 +31,7 @@ export async function POST(request) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    // Use gemini-flash-latest - Verified stable for this project
+    
     let model;
     try {
       model = genAI.getGenerativeModel({ 
@@ -48,13 +48,13 @@ export async function POST(request) {
       throw new Error('Failed to initialize AI model. Check your API key.');
     }
 
-    // Format the conversation history
+    
     const formattedContents = contents.map(msg => ({
       role: msg.role === 'model' ? 'model' : 'user',
       parts: msg.parts || [{ text: msg.text }]
     }));
 
-    // Generate response
+    
     let result;
     try {
       result = await model.generateContent({
@@ -65,7 +65,7 @@ export async function POST(request) {
       
       const errorMessage = geminiError.message || '';
       
-      // Check for specific error types
+      
       if (errorMessage.includes('API_KEY_INVALID') || errorMessage.includes('invalid api key')) {
         throw new Error('Invalid API key. Please check your NEXT_PUBLIC_CHATBOT_KEY in .env.local');
       }
@@ -92,7 +92,7 @@ export async function POST(request) {
         throw new Error('Google servers are under high demand. Please try again in 30 seconds.');
       }
       
-      // Generic error with helpful message
+      
       throw new Error(`AI service error: ${geminiError.message}\nIf this persists, get a new API key from https://makersuite.google.com/app/apikey`);
     }
 

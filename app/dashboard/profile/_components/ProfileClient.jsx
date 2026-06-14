@@ -73,8 +73,8 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
     setUploadedImageUrl(profile.petImageUrl || '');
     setPreviewUrl(profile.petImageUrl || '');
     setShowForm(true);
+
     
-    // Scroll to form
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -99,7 +99,7 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
     try {
       const finalOwnerName = formData.ownerName?.trim() || userName || '';
       const finalOwnerEmail = formData.ownerEmail?.trim() || userEmail || '';
-      
+
       const submissionData = {
         ...formData,
         id: editingId,
@@ -107,7 +107,7 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
         ownerName: finalOwnerName,
         petImageUrl: uploadedImageUrl || formData.petImageUrl || '',
       };
-      
+
       if (!submissionData.petName || !submissionData.species || !finalOwnerName) {
         const missing = [];
         if (!submissionData.petName) missing.push('Pet Name');
@@ -117,14 +117,14 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
         setLoading(false);
         return;
       }
-      
+
       const response = await fetch('/api/pet-profiles', {
         method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submissionData)
       });
       const data = await response.json();
-      
+
       if (data.success) {
         showToast(isEditing ? 'Pet profile updated successfully!' : 'Pet profile created successfully!');
         cancelEdit();
@@ -143,13 +143,13 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
       showToast('You must be logged in to delete profiles', 'error');
       return;
     }
-    
+
     const profileToDelete = profiles.find(p => p.id === id);
     if (profileToDelete && profileToDelete.ownerEmail !== userEmail) {
       showToast('You can only delete your own pet profiles', 'error');
       return;
     }
-    
+
     if (confirm('Are you sure you want to delete this profile?')) {
       try {
         const response = await fetch(`/api/pet-profiles?id=${id}`, { method: 'DELETE' });
@@ -184,11 +184,12 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "next_upload");
+    formData.append("upload_preset", "petProfile");
     formData.append("folder", "petProfile");
 
     try {
-      const res = await fetch("https://api.cloudinary.com/v1_1/dgkinq01v/image/upload", {
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: "POST",
         body: formData,
       });
@@ -216,7 +217,7 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
         </h1>
         <h1 className="text-[#1b3a34]"><FaFeatherAlt /></h1>
       </div>
-      
+
       <div className="text-center mt-5 space-x-4">
         <button
           onClick={() => {
@@ -238,8 +239,8 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
               {isEditing ? `✏️ Edit Profile: ${formData.petName}` : '🐾 Create New Pet Profile'}
             </h1>
             {isEditing && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={cancelEdit}
                 className="text-gray-400 hover:text-red-500 transition-colors"
               >
@@ -302,7 +303,7 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
                 className="mt-1 block w-full p-3 border hover:scale-103 hover:shadow-2xl transition-all border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                />
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
@@ -366,7 +367,7 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
                   )}
                 </div>
               </div>
-              
+
               <div className="flex-1 w-full mt-4 md:mt-10">
                 <label htmlFor="pet-image-upload" className="w-full block cursor-pointer">
                   <input
@@ -519,6 +520,7 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
               <input
                 type="tel"
                 name="ownerContact"
+                maxLength={10}
                 value={formData.ownerContact}
                 onChange={handleInputChange}
                 className="mt-1 block w-full p-3 border hover:scale-103 hover:shadow-2xl transition-all border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -560,14 +562,12 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
           </div>
         </form>
       )}
-
-      {/* Pet Profiles Table */}
       <div className="mt-10">
         <div className="flex items-center justify-center mb-6">
           <h2 className="text-3xl font-bold text-center text-[#1b3a34]">🐾 Pet Profiles</h2>
         </div>
-       
-        {profiles.length === 0 ? ( 
+
+        {profiles.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-gray-500 text-center">
             <FaPaw className="text-4xl mb-4 text-[#1b3a34]" />
             <p className="text-lg">No pet profiles found. Create your first pet profile!</p>
@@ -630,30 +630,30 @@ export default function ProfileClient({ initialProfiles, userEmail, userName }) 
               <button onClick={closeModal} className="text-2xl font-bold">×</button>
             </div>
             <div className="p-6 space-y-8">
-               {selectedProfile.petImageUrl && (
-                  <div className="flex justify-center mb-4">
-                    <Image
-                      src={selectedProfile.petImageUrl}
-                      alt={selectedProfile.petName}
-                      width={256}
-                      height={256}
-                      className="rounded-xl object-cover"
-                    />
-                  </div>
-                )}
-               <div className="grid md:grid-cols-2 gap-4">
-                 <p><span className="font-semibold">Species:</span> {selectedProfile.species}</p>
-                 <p><span className="font-semibold">Breed:</span> {selectedProfile.breed || 'N/A'}</p>
-                 <p><span className="font-semibold">Age:</span> {selectedProfile.age ? `${selectedProfile.age} years` : 'N/A'}</p>
-                 <p><span className="font-semibold">Gender:</span> {selectedProfile.gender || 'N/A'}</p>
-                 <p><span className="font-semibold">Weight:</span> {selectedProfile.weight || 'N/A'}</p>
-                 <p><span className="font-semibold">Allergies:</span> {selectedProfile.allergies || 'N/A'}</p>
-                 <p><span className="font-semibold">Chronic Conditions:</span> {selectedProfile.chronicConditions || 'N/A'}</p>
-                 <p><span className="font-semibold">Medications:</span> {selectedProfile.currentMedications || 'N/A'}</p>
-                 <p><span className="font-semibold">Diet Type:</span> {selectedProfile.dietType || 'N/A'}</p>
-                 <p><span className="font-semibold">Owner Name:</span> {selectedProfile.ownerName}</p>
-                 <p><span className="font-semibold">Owner Contact:</span> {selectedProfile.ownerContact || 'N/A'}</p>
-               </div>
+              {selectedProfile.petImageUrl && (
+                <div className="flex justify-center mb-4">
+                  <Image
+                    src={selectedProfile.petImageUrl}
+                    alt={selectedProfile.petName}
+                    width={256}
+                    height={256}
+                    className="rounded-xl object-cover"
+                  />
+                </div>
+              )}
+              <div className="grid md:grid-cols-2 gap-4">
+                <p><span className="font-semibold">Species:</span> {selectedProfile.species}</p>
+                <p><span className="font-semibold">Breed:</span> {selectedProfile.breed || 'N/A'}</p>
+                <p><span className="font-semibold">Age:</span> {selectedProfile.age ? `${selectedProfile.age} years` : 'N/A'}</p>
+                <p><span className="font-semibold">Gender:</span> {selectedProfile.gender || 'N/A'}</p>
+                <p><span className="font-semibold">Weight:</span> {selectedProfile.weight || 'N/A'}</p>
+                <p><span className="font-semibold">Allergies:</span> {selectedProfile.allergies || 'N/A'}</p>
+                <p><span className="font-semibold">Chronic Conditions:</span> {selectedProfile.chronicConditions || 'N/A'}</p>
+                <p><span className="font-semibold">Medications:</span> {selectedProfile.currentMedications || 'N/A'}</p>
+                <p><span className="font-semibold">Diet Type:</span> {selectedProfile.dietType || 'N/A'}</p>
+                <p><span className="font-semibold">Owner Name:</span> {selectedProfile.ownerName}</p>
+                <p><span className="font-semibold">Owner Contact:</span> {selectedProfile.ownerContact || 'N/A'}</p>
+              </div>
             </div>
             <div className="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end">
               <button onClick={closeModal} className="px-6 py-2 bg-gray-500 text-[#fcf8ef] rounded-lg hover:bg-gray-600 transition-colors">Close</button>

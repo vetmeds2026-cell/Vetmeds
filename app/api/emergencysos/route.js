@@ -4,7 +4,7 @@ import { emergencySos, users, penalties } from '@/app/configs/schema';
 import { desc, eq } from 'drizzle-orm';
 import { sendEmail, getEmergencyNotificationTemplate } from '@/app/lib/send-email';
 
-// GET - Fetch SOS history
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -12,39 +12,39 @@ export async function GET(request) {
     
     let query = db.select().from(emergencySos);
     
-    // If userEmail is provided, filter by it (for user history)
-    // Otherwise, return all (for doctor dashboard)
+    
+    
     if (userEmail) {
       query = query.where(eq(emergencySos.userEmail, userEmail));
     }
     
     const sosHistory = await query.orderBy(desc(emergencySos.createdAt));
     
-    // Fetch user details and penalties for each SOS alert
+    
     const enrichedHistory = await Promise.all(sosHistory.map(async (sos) => {
       const userDetails = await db.select().from(users).where(eq(users.email, sos.userEmail));
       const userPenalties = await db.select().from(penalties).where(eq(penalties.userEmail, sos.userEmail));
       
       const user = userDetails[0] || {};
       
-      // Check if temporary block has expired
+      
       let isStillBlocked = user.isBlocked;
       if (user.isBlocked && user.blockedUntil) {
         if (new Date() > new Date(user.blockedUntil)) {
           isStillBlocked = false;
-          // Silently unblock in DB if expired
+          
           await db.update(users).set({ isBlocked: false, blockedUntil: null }).where(eq(users.email, sos.userEmail));
         }
       }
 
-      // Filter penalties to only show on the associated SOS card
-      // A penalty maps to the most recent SOS card before the penalty was created.
+      
+      
       const userSosList = sosHistory.filter(s => s.userEmail === sos.userEmail);
       const appliedPenalties = userPenalties.filter(penalty => {
         const penaltyDate = new Date(penalty.createdAt);
         const possibleSos = userSosList.filter(s => new Date(s.createdAt) <= penaltyDate);
         if (possibleSos.length > 0) {
-          // sosHistory is already sorted by desc(createdAt) so [0] is nearest preceded
+          
           return possibleSos[0].id === sos.id;
         }
         if (userSosList.length > 0) {
@@ -75,7 +75,7 @@ export async function GET(request) {
   }
 }
 
-// POST - Create a new SOS alert
+
 export async function POST(request) {
   try {
     const formData = await request.formData();
@@ -91,13 +91,13 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Check if user is blocked
+    
     const userRecords = await db.select().from(users).where(eq(users.email, userEmail));
     if (userRecords.length > 0) {
       const user = userRecords[0];
       if (user.isBlocked) {
         if (user.blockedUntil && new Date() > new Date(user.blockedUntil)) {
-          // Block expired, unblock first
+          
           await db.update(users).set({ isBlocked: false, blockedUntil: null }).where(eq(users.email, userEmail));
         } else {
           const blockMsg = user.blockedUntil === '9999-12-31T23:59:59.999Z' 
@@ -112,21 +112,21 @@ export async function POST(request) {
     let imageUrl = null;
     let attachments = [];
 
-    // 1. Handle File processing and Cloudinary Upload
+    
     if (imageFile && typeof imageFile === 'object' && imageFile.name) {
       try {
         const arrayBuffer = await imageFile.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const base64Image = `data:${imageFile.type || 'image/jpeg'};base64,${buffer.toString('base64')}`;
 
-        // Always add to email attachments
+        
         attachments.push({
           filename: imageFile.name || 'emergency_image.jpg',
           content: buffer
         });
 
-        const cloudName = "dgkinq01v";
-        const uploadPreset = "next_upload";
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = "emergency_sos";
         
         const cldFormData = new FormData();
         cldFormData.append("file", base64Image);
@@ -148,7 +148,7 @@ export async function POST(request) {
       }
     }
 
-    // 2. Save to Database
+    
     const newSos = await db.insert(emergencySos).values({
       userEmail,
       userName,
@@ -162,7 +162,7 @@ export async function POST(request) {
 
 
 
-    // 3. Send Email Notification to Doctor 1
+    
     try {
       const emailHtml = getEmergencyNotificationTemplate({
         userName,
@@ -174,11 +174,18 @@ export async function POST(request) {
         address
       });
 
+      
+      const doctorEmails = [
+        process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC1,
+        process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC2,
+        process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC3
+      ].filter(Boolean).join(', ');
+
       await sendEmail({
-        to: process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC1,
+        to: doctorEmails,
         subject: `🚨 EMERGENCY: ${userName} - ${userEmail}`,
         html: emailHtml,
-        doctorEmail: 'shrileela@vetmeds.com', // Use Doc1 transporter
+        doctorEmail: 'shrileela@vetmeds.com', 
         attachments
       });
 
@@ -201,7 +208,7 @@ export async function POST(request) {
   }
 }
 
-// PATCH - Update SOS status (Resolve)
+
 export async function PATCH(request) {
   try {
     const { id, status } = await request.json();
@@ -225,7 +232,7 @@ export async function PATCH(request) {
       );
     }
 
-    // Grant 50 points if emergency is resolved/completed
+    
     if (status === 'completed' || status === 'resolved') {
       try {
         const email = updatedSos[0].userEmail;

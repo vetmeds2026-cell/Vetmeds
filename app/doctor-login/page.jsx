@@ -37,14 +37,14 @@ function DoctorLogin() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store doctor auth data
+        
         localStorage.setItem('doctorAuth', JSON.stringify({
           email: data.email,
           name: data.name,
           loginTime: new Date().toISOString()
         }));
 
-        // Redirect to doctor dashboard
+        
         router.push('/doctor-dashboard');
       } else {
         setError(data.error || 'Invalid email or password. Please try again.');
@@ -61,8 +61,6 @@ function DoctorLogin() {
   return (
     <div className="min-h-screen bg-[#fcf8ef] flex items-center justify-center p-4">
       <div className="max-w-6xl w-full grid md:grid-cols-2 gap-8 items-center">
-
-        {/* Left Side - Branding & Info */}
         <div className="hidden md:block">
           <div className="bg-[#1b3a34] rounded-3xl p-12 text-[#fcf8ef] shadow-2xl">
             <FaStethoscope className="text-8xl mb-6 opacity-80" />
@@ -72,8 +70,6 @@ function DoctorLogin() {
               Access your dashboard to manage appointments, view patient information,
               and provide the best care for your furry patients.
             </p>
-
-            {/* Demo Credentials */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mt-8">
               <div>
                 <Image src={'/doc.jpg'} alt="dog" width={1000} height={1000} className='rounded-full' />
@@ -81,10 +77,7 @@ function DoctorLogin() {
             </div>
           </div>
         </div>
-
-        {/* Right Side - Login Form */}
         <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 border border-gray-100">
-          {/* Mobile Branding */}
           <div className="md:hidden text-center mb-10">
             <div className="flex justify-center mb-6">
               <div className="bg-[#1b3a34]/10 p-5 rounded-full">
@@ -95,8 +88,6 @@ function DoctorLogin() {
             <h1 className="text-2xl font-bold text-[#1b3a34] uppercase tracking-tight">Doctor Portal</h1>
             <div className="h-1 w-20 bg-[#1b3a34] mx-auto mt-2 rounded-full"></div>
           </div>
-
-          {/* Desktop Header */}
           <div className="hidden md:block text-center mb-10">
             <div className="bg-[#1b3a34]/5 p-4 rounded-2xl inline-block mb-4">
               <FaUserMd className="text-5xl text-[#1b3a34]" />
@@ -104,8 +95,6 @@ function DoctorLogin() {
             <h2 className="text-4xl font-bold text-gray-800 mb-2">Welcome back</h2>
             <p className="text-gray-500 font-medium italic">Please sign in to your dashboard</p>
           </div>
-
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg">
               <p className="flex items-center gap-2">
@@ -114,10 +103,7 @@ function DoctorLogin() {
               </p>
             </div>
           )}
-
-          {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
-            {/* Email Input */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 <FaEnvelope className="inline mr-2 text-[#1b3a34]" />
@@ -132,8 +118,6 @@ function DoctorLogin() {
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1b3a34] focus:border-[#1b3a34] transition-all text-lg"
               />
             </div>
-
-            {/* Password Input */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 <FaLock className="inline mr-2 text-[#1b3a34]" />
@@ -149,8 +133,6 @@ function DoctorLogin() {
               />
 
             </div>
-
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -166,11 +148,6 @@ function DoctorLogin() {
               )}
             </button>
           </form>
-
-          {/* Available Doctors List */}
-
-
-          {/* Back to Home */}
           <div className="mt-6 text-center">
             <button
               onClick={() => router.push('/')}

@@ -3,7 +3,7 @@ import { db } from '@/app/configs/db';
 import { collectedPoints } from '@/app/configs/schema';
 import { desc, eq, and } from 'drizzle-orm';
 
-// GET - Fetch collected points for a specific doctor
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -34,12 +34,12 @@ export async function GET(request) {
   }
 }
 
-// POST - Add a new record of collected points
+
 export async function POST(request) {
   try {
     const body = await request.json();
     
-    if (!body.userEmail || !body.userName || !body.petName || !body.doctorEmail || !body.doctorName || !body.points || !body.petIssue) {
+    if (!body.userEmail || !body.userName || !body.petName || !body.doctorEmail || !body.doctorName || !body.points || !body.petIssue || !body.appointmentId) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -51,6 +51,7 @@ export async function POST(request) {
       doctorName: body.doctorName,
       points: body.points,
       petIssue: body.petIssue,
+      appointmentId: body.appointmentId,
       status: 'collected'
     }).returning();
 
@@ -61,7 +62,7 @@ export async function POST(request) {
   }
 }
 
-// PATCH - Transfer points to main doctor (mark as transferred)
+
 export async function PATCH(request) {
   try {
     const { doctorEmail } = await request.json();
@@ -79,7 +80,7 @@ export async function PATCH(request) {
         )
       ).returning();
 
-    // Credit the main doctor (Boss) in the users table
+    
     if (updated.length > 0) {
       const totalPoints = updated.reduce((sum, item) => sum + item.points, 0);
       const bossEmail = 'omkar@vetmeds.com';

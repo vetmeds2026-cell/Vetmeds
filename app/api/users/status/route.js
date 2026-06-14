@@ -20,12 +20,12 @@ export async function GET(request) {
 
     const user = userDetails[0];
     
-    // Check if temporary block has expired
+    
     let isStillBlocked = user.isBlocked;
     if (user.isBlocked && user.blockedUntil) {
       if (new Date() > new Date(user.blockedUntil)) {
         isStillBlocked = false;
-        // Silently unblock in DB if expired
+        
         await db.update(users).set({ isBlocked: false, blockedUntil: null }).where(eq(users.email, email));
       }
     }

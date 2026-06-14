@@ -4,7 +4,7 @@ import { sql } from 'drizzle-orm';
 export const petProfiles = pgTable('pet_profiles', {
   id: serial('id').primaryKey(),
   
-  // Basic Information
+  
   petName: text('pet_name').notNull(),
   species: text('species').notNull(),
   breed: text('breed'),
@@ -12,9 +12,9 @@ export const petProfiles = pgTable('pet_profiles', {
   dateOfBirth: date('date_of_birth'),
   age: integer('age'),
   colorMarkings: text('color_markings'),
-  petImageUrl: text('pet_image_url'), // Cloudinary image URL
+  petImageUrl: text('pet_image_url'), 
   
-  // Medical & Health Info
+  
   weight: text('weight'),
   allergies: text('allergies'),
   chronicConditions: text('chronic_conditions'),
@@ -22,19 +22,19 @@ export const petProfiles = pgTable('pet_profiles', {
   vaccinationRecords: text('vaccination_records'),
   lastVetVisitDate: date('last_vet_visit_date'),
   
-  // Lifestyle & Care
+  
   dietType: text('diet_type'),
   exerciseLevel: text('exercise_level'),
   favoriteActivities: text('favorite_activities'),
   behaviorNotes: text('behavior_notes'),
   
-  // Owner Information
+  
   ownerName: text('owner_name').notNull(),
   ownerContact: text('owner_contact'),
   ownerEmail: text('owner_email'),
   address: text('address'),
   
-  // Timestamps
+  
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
@@ -42,55 +42,55 @@ export const petProfiles = pgTable('pet_profiles', {
 export const appointments = pgTable('appointments', {
   id: serial('id').primaryKey(),
   
-  // Pet and Owner Information
+  
   petName: text('pet_name').notNull(),
   petProblem: text('pet_problem').notNull(),
   ownerName: text('owner_name').notNull(),
   ownerEmail: text('owner_email').notNull(),
   
-  // Doctor Information
+  
   doctorName: text('doctor_name').notNull(),
   doctorEmail: text('doctor_email').notNull(),
   
-  // Appointment Details
+  
   appointmentDate: text('appointment_date').notNull(),
   appointmentTime: text('appointment_time').notNull(),
-  timeSlot: text('time_slot').notNull(), // Morning, Evening, Night
+  timeSlot: text('time_slot').notNull(), 
   
-  // Pet Profile Details (JSON string)
+  
   petProfileDetails: text('pet_profile_details'),
   
-  // Medicines prescribed by doctor
-  medicines: text('medicines').default('[]'), // JSON array of medicines
   
-  // Status
-  status: text('status').default('pending'), // pending, confirmed, completed, cancelled
+  medicines: text('medicines').default('[]'), 
   
-  // Status Update Notification
+  
+  status: text('status').default('pending'), 
+  
+  
   statusUpdated: boolean('status_updated').default(false),
   statusUpdateMessage: text('status_update_message'),
   
-  // Points tracking
+  
   pointsDeducted: boolean('points_deducted').default(false),
   
-  // Timestamps
+  
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
-// NEW TABLE FOR CHATBOT AI FEATURE
+
 export const chats = pgTable('chats', {
   id: serial('id').primaryKey(),
   userEmail: text('user_email').notNull(),
   chatName: text('chat_name').notNull(),
-  chatHistory: text('chat_history').default('[]'), // JSON string of chat history
-  uploadedImage: text('uploaded_image'), // Cloudinary image URL
+  chatHistory: text('chat_history').default('[]'), 
+  uploadedImage: text('uploaded_image'), 
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 
-// FOREIGN TABLES RECOVERED FROM DATABASE TO PREVENT DELETION
+
 export const users = pgTable("users", {
 	id: text().primaryKey().notNull(),
 	email: text().notNull(),
@@ -159,14 +159,14 @@ export const emailLogs = pgTable("email_logs", {
 		}),
 ]);
 
-// EMERGENCY SOS TABLE
+
 export const emergencySos = pgTable('emergency_sos', {
   id: serial('id').primaryKey(),
   userEmail: varchar('user_email').notNull(),
   userName: varchar('user_name').notNull(),
   description: text('description').notNull(),
   imageUrl: varchar('image_url'),
-  status: varchar('status').default('pending').notNull(), // pending, responding, completed, cancelled
+  status: varchar('status').default('pending').notNull(), 
   latitude: varchar('latitude'),
   longitude: varchar('longitude'),
   address: text('address'),
@@ -182,7 +182,8 @@ export const collectedPoints = pgTable('collected_points', {
   doctorName: varchar('doctor_name').notNull(),
   points: integer('points').notNull(),
   petIssue: text('pet_issue').notNull(),
-  status: varchar('status').default('collected').notNull(), // collected, transferred
+  appointmentId: integer('appointment_id'),
+  status: varchar('status').default('collected').notNull(), 
   createdAt: varchar('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 

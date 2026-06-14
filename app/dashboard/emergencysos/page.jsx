@@ -20,21 +20,21 @@ function EmergencySos() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
 
-  // Map State
+  
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
-  const [location, setLocation] = useState({ lat: 18.5204, lng: 73.8567, address: '' }); // Default Pune
+  const [location, setLocation] = useState({ lat: 18.5204, lng: 73.8567, address: '' }); 
   const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Search State
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
 
   const formRef = useRef();
 
-  // Initialize Map
+  
   useEffect(() => {
     if (mapRef.current) return;
 
@@ -63,7 +63,7 @@ function EmergencySos() {
 
     mapRef.current.on('load', () => setMapLoaded(true));
 
-    // Try to get user current location automatically
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
@@ -80,7 +80,7 @@ function EmergencySos() {
 
   const updateLocation = async (lat, lng) => {
     setLocation(prev => ({ ...prev, lat, lng }));
-    // Try to get address via reverse geocoding
+    
     try {
       const mapKey = process.env.NEXT_PUBLIC_MAP_KEY || '740c33e5c07642d3a2b37a1d05ea8301';
       const response = await fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=${mapKey}`);
@@ -133,7 +133,7 @@ function EmergencySos() {
     setSearchQuery('');
   };
 
-  // Fetch SOS history on mount
+  
   useEffect(() => {
     if (user?.primaryEmailAddress?.emailAddress) {
       fetchSosHistory();
@@ -183,7 +183,7 @@ function EmergencySos() {
         formData.append('file', selectedFile);
       }
 
-      // Add Map Location
+      
       formData.append('latitude', location.lat);
       formData.append('longitude', location.lng);
       formData.append('address', location.address);
@@ -202,7 +202,7 @@ function EmergencySos() {
         setPreviewUrl(null);
         setMessageText('');
         setIsAgreed(false);
-        fetchSosHistory(); // Refresh history
+        fetchSosHistory(); 
       } else {
         throw new Error(data.error || 'Failed to send alert');
       }
@@ -218,7 +218,6 @@ function EmergencySos() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-12">
-      {/* Emergency Header */}
       <div className="bg-red-100 border-l-4 border-red-500 p-4 mb-8 rounded-r-lg shadow-sm">
         <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
           <div className="flex-shrink-0 text-red-500 text-4xl sm:text-3xl">
@@ -266,8 +265,6 @@ function EmergencySos() {
               />
             </div>
           </div>
-
-          {/* Map Selection Section */}
           <div className="space-y-3">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               <FaMapMarkerAlt className="text-red-500" />
@@ -282,8 +279,6 @@ function EmergencySos() {
                   <FaSpinner className="animate-spin text-2xl text-red-500 mr-2" /> Initializing Map...
                 </div>
               )}
-
-              {/* Search Overlay */}
               <div className="absolute top-4 left-4 z-20 w-64 sm:w-80 shadow-2xl">
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -345,8 +340,6 @@ function EmergencySos() {
               placeholder="Describe the emergency situation (e.g. Pet is bleeding, fainted, etc.)"
             />
           </div>
-
-          {/* Media Upload Section */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
               <FaImage className="inline mr-2" />
@@ -399,8 +392,6 @@ function EmergencySos() {
               </div>
             </div>
           )}
-
-          {/* Responsibility Warning & Agreement */}
           <div className="bg-red-50/50 border-2 border-red-100 rounded-2xl p-6 space-y-4 shadow-inner">
             <div className="flex items-start gap-3">
               <FaExclamationTriangle className="text-red-600 text-xl mt-1 shrink-0 animate-pulse" />
@@ -449,9 +440,6 @@ function EmergencySos() {
           </div>
         </form>
       </div>
-
-
-      {/* First Aid Information */}
       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 sm:p-8 mb-12 mt-10">
         <h2 className="text-2xl font-bold text-[#1b3a34] mb-6 flex items-center">
           <FaFirstAid className="mr-2 text-red-500" /> Pet First Aid Basics
@@ -507,8 +495,6 @@ function EmergencySos() {
           </p>
         </div>
       </div>
-
-      {/* Transportation Tips */}
       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-[#1b3a34] mb-6 flex items-center">
           <FaCarAlt className="mr-2 text-red-500" /> Emergency Transportation Tips
@@ -553,13 +539,13 @@ function EmergencySos() {
         </div>
       </div>
 
-      {/* Emergency SOS History */}
+      
       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 sm:p-8 mt-12 overflow-hidden">
         <h2 className="text-2xl font-bold text-[#1b3a34] mb-6 flex items-center gap-2">
           <FaHandHoldingHeart /> Your Kind Soulness
         </h2>
 
-        {/* User Block Status Banner */}
+        
         {sosHistory.length > 0 && sosHistory[0].userStatus?.isBlocked && (
           <div className="mb-6 p-4 bg-red-100 border-2 border-red-200 rounded-2xl flex items-center gap-4 animate-pulse">
             <FaExclamationTriangle className="text-3xl text-red-600 shrink-0" />
@@ -634,15 +620,12 @@ function EmergencySos() {
                 ))}
               </div>
             )}
-
-            {/* Applied Penalties Section (Moved to Bottom) */}
             {sosHistory.some(sos => sos.penalties?.length > 0) && (
               <div className="mt-10 p-6 bg-orange-50 border-2 border-orange-200 rounded-3xl animate-fadeIn">
                 <h3 className="text-sm font-black text-orange-700 uppercase tracking-widest mb-4 flex items-center gap-2">
                   <FaExclamationTriangle className="animate-pulse" /> Applied Penalties & Restrictions
                 </h3>
                 <div className="grid gap-3">
-                  {/* De-duplicate penalties across SOS records */}
                   {Array.from(new Map(
                     sosHistory.flatMap(sos => (sos.penalties || []))
                       .map(p => [p.id || p.createdAt, p])

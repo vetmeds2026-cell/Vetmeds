@@ -1,14 +1,14 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 
-// Create database connection
+
 const connectionString = process.env.NEXT_PUBLIC_DB_CONNECTION_STRING;
 
 let db;
 
 if (!connectionString) {
   console.warn('No database connection string found. Using in-memory fallback.');
-  // Create a simple in-memory store for development
+  
   const memoryStore = {
     petProfiles: []
   };

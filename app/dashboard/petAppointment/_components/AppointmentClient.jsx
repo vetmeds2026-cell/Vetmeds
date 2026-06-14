@@ -53,7 +53,7 @@ const doctors = [
   },
   {
     id: 2,
-    name: "Dr. Omkar Veershaiv Wangi",
+    name: "Dr. Omkar M. VeershaivWangi",
     specialization: "Emergency & Critical Care",
     experience: "12 years",
     email: "omkar@vetmeds.com",
@@ -83,7 +83,7 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const [filteredDoctors, setFilteredDoctors] = useState([]);
 
-  // Format received appointments
+  
   const formattedAppointments = (initialAppointments || []).map(apt => {
     let parsedMedicines = [];
     if (typeof apt.medicines === 'string') {
@@ -114,7 +114,7 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
     }
   }, [selectedTimeSlot]);
 
-  // Optionally could keep a fetch flag if you want polling or refetching, but data is now SSR'd
+  
 
   const handleTimeSlotSelect = (slot) => {
     setSelectedTimeSlot(slot);
@@ -150,11 +150,11 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
       const currentMinutes = today.getMinutes();
       const currentTimeInMinutes = currentHours * 60 + currentMinutes;
 
-      // Last slot times in minutes
+      
       const shiftEndTimes = {
-        'morning': 17 * 60 + 30, // 5:30 PM = 1050
-        'evening': 25 * 60 + 30, // 1:30 AM next day = 1530
-        'night': 9 * 60 + 30     // 9:30 AM = 570
+        'morning': 17 * 60 + 30, 
+        'evening': 25 * 60 + 30, 
+        'night': 9 * 60 + 30     
       };
 
       return shiftEndTimes[shift] > currentTimeInMinutes;
@@ -185,20 +185,18 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
     setShowMedicineModal(true);
   };
 
-  /**
-   * Generate Full Appointment Report PDF
-   */
+  
   const generatePDF = async (appointment) => {
     const doc = new jsPDF({ compress: true });
     const logoBase64 = await getImageBase64('/logo2.png', 400);
 
-    // Parse pet details
+    
     let petDetails = {};
     try {
       petDetails = appointment.petProfileDetails ? JSON.parse(appointment.petProfileDetails) : {};
     } catch (e) { petDetails = {}; }
 
-    // Header
+    
     doc.setFillColor(20, 150, 127);
     doc.rect(0, 0, 210, 40, 'F');
     doc.addImage(logoBase64, 'PNG', 15, 10, 30, 20, undefined, 'FAST');
@@ -207,7 +205,7 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
     doc.setFont(undefined, 'bold');
     doc.text('APPOINTMENT REPORT', 105, 25, { align: 'center' });
 
-    // Clinic Info
+    
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
@@ -217,26 +215,26 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
     doc.text(clinicAddress, 195, 55, { align: 'right' });
     doc.text('Contact: +91 9876543210', 195, 60, { align: 'right' });
 
-    // Kind Soulness Points
+    
     if (appointment.pointsCollected) {
       doc.setFontSize(10);
-      doc.setTextColor(219, 39, 119); // Pink-600
+      doc.setTextColor(219, 39, 119); 
       doc.text(`Kind Soulness Contribution: ${appointment.pointsCollected} Points`, 195, 65, { align: 'right' });
-      doc.setTextColor(0, 0, 0); // Reset color for the rest of the document
+      doc.setTextColor(0, 0, 0); 
     }
 
-    // Info Sections
+    
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 70, 190, 70);
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
 
-    // Doctor & Date
+    
     const doctorNameFormatted = appointment.doctorName.startsWith('Dr.') ? appointment.doctorName : `Dr. ${appointment.doctorName}`;
     doc.text(`Doctor: ${doctorNameFormatted}`, 20, 80);
     doc.text(`Date: ${new Date(appointment.appointmentDate).toLocaleDateString()}`, 190, 80, { align: 'right' });
 
-    // Pet & Owner
+    
     doc.text(`Pet Name: ${appointment.petName}`, 20, 90);
     doc.text(`Owner: ${appointment.ownerName}`, 190, 90, { align: 'right' });
 
@@ -261,7 +259,7 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
 
     yPos += (problemLines.length * 7) + 10;
 
-    // Prescribed Medicines
+    
     if (appointment.medicines && appointment.medicines.length > 0) {
       doc.setFont(undefined, 'bold');
       doc.setFontSize(14);
@@ -291,7 +289,7 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
       });
     }
 
-    // Footer
+    
     const pageHeight = doc.internal.pageSize.height;
     doc.setFillColor(20, 150, 127);
     doc.rect(0, pageHeight - 15, 210, 15, 'F');
@@ -302,14 +300,12 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
     doc.save(`VetMeds_Report_${appointment.petName}_${appointment.id}.pdf`);
   };
 
-  /**
-   * Generate Medical Prescription PDF
-   */
+  
   const generatePrescriptionPDF = async (appointment) => {
     const doc = new jsPDF({ compress: true });
     const logoBase64 = await getImageBase64('/logo2.png', 400);
 
-    // Header
+    
     doc.setFillColor(20, 150, 127);
     doc.rect(0, 0, 210, 40, 'F');
     doc.addImage(logoBase64, 'PNG', 15, 10, 30, 20, undefined, 'FAST');
@@ -318,7 +314,7 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
     doc.setFont(undefined, 'bold');
     doc.text('MEDICAL PRESCRIPTION', 105, 25, { align: 'center' });
 
-    // Clinic Info
+    
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
@@ -328,20 +324,20 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
     doc.text(clinicAddress, 195, 55, { align: 'right' });
     doc.text('Contact: +91 9876543210', 195, 60, { align: 'right' });
 
-    // Kind Soulness Points
+    
     if (appointment.pointsCollected) {
       doc.setFontSize(9);
-      doc.setTextColor(219, 39, 119); // Pink-600
+      doc.setTextColor(219, 39, 119); 
       doc.text(`Kind Soulness Contribution: ${appointment.pointsCollected} Points`, 195, 65, { align: 'right' });
-      doc.setTextColor(0, 0, 0); // Reset color
+      doc.setTextColor(0, 0, 0); 
     }
 
-    // Rx Symbol
+    
     doc.setFontSize(30);
     doc.setTextColor(20, 150, 127);
     doc.text('Rx', 20, 65);
 
-    // Info
+    
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 70, 190, 70);
     doc.setFontSize(11);
@@ -389,7 +385,7 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
       });
     }
 
-    // Footer
+    
     const pageHeight = doc.internal.pageSize.height;
     doc.setFillColor(20, 150, 127);
     doc.rect(0, pageHeight - 15, 210, 15, 'F');
@@ -464,8 +460,8 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                 onClick={() => handleTimeSlotSelect('morning')}
                 disabled={!isShiftAvailable('morning')}
                 className={`p-6 rounded-xl border-2 transition-all transform hover:scale-105 ${selectedTimeSlot === 'morning'
-                    ? 'border-[#1b3a34] bg-[#1b3a34] text-[#fcf8ef] shadow-lg'
-                    : 'border-gray-300 bg-white hover:border-[#1b3a34] hover:shadow-md'
+                  ? 'border-[#1b3a34] bg-[#1b3a34] text-[#fcf8ef] shadow-lg'
+                  : 'border-gray-300 bg-white hover:border-[#1b3a34] hover:shadow-md'
                   } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
               >
                 <div className="text-center">
@@ -479,8 +475,8 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                 onClick={() => handleTimeSlotSelect('evening')}
                 disabled={!isShiftAvailable('evening')}
                 className={`p-6 rounded-xl border-2 transition-all transform hover:scale-105 ${selectedTimeSlot === 'evening'
-                    ? 'border-[#1b3a34] bg-[#1b3a34] text-[#fcf8ef] shadow-lg'
-                    : 'border-gray-300 bg-white hover:border-[#1b3a34] hover:shadow-md'
+                  ? 'border-[#1b3a34] bg-[#1b3a34] text-[#fcf8ef] shadow-lg'
+                  : 'border-gray-300 bg-white hover:border-[#1b3a34] hover:shadow-md'
                   } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
               >
                 <div className="text-center">
@@ -494,8 +490,8 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                 onClick={() => handleTimeSlotSelect('night')}
                 disabled={!isShiftAvailable('night')}
                 className={`p-6 rounded-xl border-2 transition-all transform hover:scale-105 ${selectedTimeSlot === 'night'
-                    ? 'border-[#1b3a34] bg-[#1b3a34] text-[#fcf8ef] shadow-lg'
-                    : 'border-gray-300 bg-white hover:border-[#1b3a34] hover:shadow-md'
+                  ? 'border-[#1b3a34] bg-[#1b3a34] text-[#fcf8ef] shadow-lg'
+                  : 'border-gray-300 bg-white hover:border-[#1b3a34] hover:shadow-md'
                   } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
               >
                 <div className="text-center">
@@ -559,7 +555,6 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
             </div>
           ) : (
             <>
-              {/* Desktop Table View */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full table-auto">
                   <thead className="bg-[#1b3a34] text-[#fcf8ef]">
@@ -599,12 +594,12 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                           <div className="flex items-center gap-2">
                             <span
                               className={`w-28 text-center py-1 rounded-full text-xs font-semibold ${appointment.status === 'confirmed'
-                                  ? 'bg-green-100 text-green-800'
-                                  : appointment.status === 'pending'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : appointment.status === 'completed'
-                                      ? 'bg-blue-100 text-blue-800'
-                                      : 'bg-red-100 text-red-800'
+                                ? 'bg-green-100 text-green-800'
+                                : appointment.status === 'pending'
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : appointment.status === 'completed'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-red-100 text-red-800'
                                 }`}
                             >
                               {appointment.status?.toUpperCase()}
@@ -617,7 +612,6 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                                 >
                                   <FaHandHoldingHeart size={14} />
                                 </button>
-                                {/* Premium Tooltip */}
                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-20">
                                   <div className="bg-[#1b3a34] text-white text-[10px] font-black py-1 px-3 rounded-lg whitespace-nowrap shadow-xl border border-white/20">
                                     KIND SOULNESS: {appointment.pointsCollected} PTS
@@ -626,13 +620,15 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                                 </div>
                               </div>
                             )}
-                            <button
-                              onClick={() => generatePDF(appointment)}
-                              className="px-2 py-1 bg-purple-500 text-[#fcf8ef] text-sm rounded-lg hover:bg-purple-600 transition-colors shadow-sm flex items-center gap-1"
-                              title="Download PDF"
-                            >
-                              <FaDownload size={14} />
-                            </button>
+                            {(appointment.status !== 'pending' && appointment.status !== 'cancelled') && (
+                              <button
+                                onClick={() => generatePDF(appointment)}
+                                className="px-2 py-1 bg-purple-500 text-[#fcf8ef] text-sm rounded-lg hover:bg-purple-600 transition-colors shadow-sm flex items-center gap-1"
+                                title="Download PDF"
+                              >
+                                <FaDownload size={14} />
+                              </button>
+                            )}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-sm">
@@ -662,8 +658,6 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                   </tbody>
                 </table>
               </div>
-
-              {/* Mobile Card View */}
               <div className="md:hidden space-y-4">
                 {appointments.map((appointment) => (
                   <div
@@ -687,12 +681,12 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                       </div>
                       <span
                         className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider ${appointment.status === 'confirmed'
-                            ? 'bg-green-500 text-white'
-                            : appointment.status === 'pending'
-                              ? 'bg-yellow-500 text-white'
-                              : appointment.status === 'completed'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-red-500 text-white'
+                          ? 'bg-green-500 text-white'
+                          : appointment.status === 'pending'
+                            ? 'bg-yellow-500 text-white'
+                            : appointment.status === 'completed'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-red-500 text-white'
                           }`}
                       >
                         {appointment.status?.toUpperCase()}
@@ -746,12 +740,14 @@ export default function AppointmentClient({ initialAppointments, userEmail }) {
                             <span className="text-[10px] font-black text-pink-700">{appointment.pointsCollected} PTS</span>
                           </div>
                         )}
-                        <button
-                          onClick={() => generatePDF(appointment)}
-                          className="px-3 py-1.5 bg-purple-500 text-[#fcf8ef] rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-90 transition-transform"
-                        >
-                          <FaDownload /> Report
-                        </button>
+                        {(appointment.status !== 'pending' && appointment.status !== 'cancelled') && (
+                          <button
+                            onClick={() => generatePDF(appointment)}
+                            className="px-3 py-1.5 bg-purple-500 text-[#fcf8ef] rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-90 transition-transform"
+                          >
+                            <FaDownload /> Report
+                          </button>
+                        )}
                       </div>
                     </div>
 

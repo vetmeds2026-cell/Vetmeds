@@ -21,7 +21,7 @@ function DashboardLayout({ children }) {
   const { user } = useUser();
   const pathname = usePathname();
 
-  // Dynamic Page Ttle
+  
   useEffect(() => {
     const currentItem = menu.find(item => pathname.includes(item.path));
     if (currentItem) {
@@ -53,18 +53,18 @@ function DashboardLayout({ children }) {
       path: "/dashboard/profile",
     },
 
-    // {
-    //   id: 3,
-    //   name: "Shopping",
-    //   icon: <MdOutlineShoppingCart />,
-    //   path: "/dashboard/shopping",
-    // },
-    // {
-    //   id: 4,
-    //   name: "About Us",
-    //   icon: <LuCat />,
-    //   path: "/dashboard/aboutus",
-    // },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     {
       id: 4,
       name: "Take Appointment",
@@ -81,7 +81,6 @@ function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Mobile Menu Button - Floating on top right */}
       <div className="md:hidden fixed top-6 right-6 z-[70]">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -90,8 +89,6 @@ function DashboardLayout({ children }) {
           {mobileMenuOpen ? <AiOutlineClose size={24} /> : <RiStackFill size={24} />}
         </button>
       </div>
-
-      {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm transition-opacity duration-300" onClick={() => setMobileMenuOpen(false)}>
           <div className="h-full w-72" onClick={(e) => e.stopPropagation()}>
@@ -99,20 +96,14 @@ function DashboardLayout({ children }) {
           </div>
         </div>
       )}
-
-      {/* Desktop Sidebar */}
       <div className='md:w-72 hidden md:block'>
         <Sidebar />
       </div>
-
-      {/* Main Content */}
       <div className='md:ml-64 p-4 sm:p-6 md:p-10 flex-grow h-full'>
         <BlockGuard>
           {children}
         </BlockGuard>
       </div>
-
-      {/* Footer */}
       <div className="w-full md:w-fit md:ml-72 overflow-hidden">
         <Footer />
       </div>

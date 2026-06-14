@@ -6,20 +6,17 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
 <div className="relative w-full h-screen overflow-hidden">
-      {/* Background Video */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover"
-        src="https://res.cloudinary.com/dgkinq01v/video/upload/v1781253118/nsk8tgcvsyw0zv8xtatd.mp4" 
+        src={`https://res.cloudinary.com/dgkinq01v/video/upload/v1781253118/nsk8tgcvsyw0zv8xtatd.mp4`} 
         autoPlay
         loop
         muted
         playsInline
       />
 
-      {/* Overlay (optional for darker effect) */}
+     
       <div className="absolute inset-0 bg-black/20"></div>
-
-      {/* Content over video */}
       <div 
         className="flex-grow "
        

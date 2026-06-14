@@ -3,10 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useClerk, useUser } from '@clerk/nextjs';
 import { FaSkullCrossbones, FaExclamationTriangle } from 'react-icons/fa';
 
-/**
- * BlockGuard component checks if the current user is restricted.
- * If restricted, it displays a warning and automatically logs them out.
- */
+
 const BlockGuard = ({ children }) => {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
@@ -32,10 +29,10 @@ const BlockGuard = ({ children }) => {
           setIsBlocked(true);
           setBlockInfo(data.data);
 
-          // Auto-logout after showing message for a few seconds
+          
           setTimeout(() => {
             signOut();
-          }, 6000); // Give user 6 seconds to read the message
+          }, 6000); 
         }
       } catch (error) {
         console.error('Error checking user block status:', error);
@@ -54,7 +51,6 @@ const BlockGuard = ({ children }) => {
 
     return (
       <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-        {/* Background GIF with Darker Overlay */}
         <div className="absolute inset-0 z-0">
           <img
             src="/angrymob.gif"
@@ -68,11 +64,7 @@ const BlockGuard = ({ children }) => {
           />
           <div className="absolute inset-0 bg-black/20 backdrop-blur-[4px]"></div>
         </div>
-
-        {/* Content Section - Line by Line */}
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center gap-8 sm:gap-12 animate-contentFadeIn">
-
-          {/* 1. Logo */}
           <div className="transition-transform duration-700 hover:scale-110">
             <img
               src="/logo2.png"
@@ -80,24 +72,18 @@ const BlockGuard = ({ children }) => {
               className="w-32 sm:w-48 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
             />
           </div>
-
-          {/* 2. Big Blocking Heading */}
           <div className="space-y-4">
             <h1 className="text-5xl sm:text-7xl font-black text-red-600 tracking-tighter uppercase leading-none drop-shadow-[0_0_30px_rgba(220,38,38,0.5)]">
               Access <br className="sm:hidden" /> Restricted
             </h1>
             <div className="h-1.5 w-32 bg-red-600 mx-auto rounded-full shadow-[0_0_15px_rgba(220,38,38,1)]"></div>
           </div>
-
-          {/* 3. Reason */}
           <div className="max-w-xl px-4">
             <p className="text-[10px] text-red-500 font-black uppercase tracking-[0.4em] mb-4">Security Violation</p>
             <p className="text-xl sm:text-2xl text-[#fcf8ef] font-bold italic leading-relaxed opacity-90">
               "{blockInfo.blockReason || 'False emergency reporting or intentional system manipulation detected.'}"
             </p>
           </div>
-
-          {/* 4. Block Time & Unblock Date */}
           <div className="flex flex-col items-center gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-12">
               <div>
@@ -121,7 +107,6 @@ const BlockGuard = ({ children }) => {
               <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest animate-pulse">
                 Automatically logging out...
               </p>
-              {/* Progress Bar Container */}
               <div className="w-56 h-1 bg-white/10 rounded-full overflow-hidden">
                 <div className="h-full bg-red-600 animate-timer-progress w-full"></div>
               </div>
@@ -149,7 +134,7 @@ const BlockGuard = ({ children }) => {
     );
   }
 
-  // If not blocked, show children
+  
   return <>{children}</>;
 };
 

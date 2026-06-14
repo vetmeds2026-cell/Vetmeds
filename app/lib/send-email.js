@@ -1,23 +1,35 @@
 import nodemailer from 'nodemailer';
 
-/**
- * Get the correct transporter based on the doctor's email
- */
+
+export const getDoctorServiceEmail = (doctorEmail) => {
+  const email = doctorEmail?.toLowerCase();
+  if (email === 'shrileela@vetmeds.com') {
+    return process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC1;
+  } else if (email === 'omkar@vetmeds.com') {
+    return process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC2;
+  } else if (email === 'sanchit@vetmeds.com') {
+    return process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC3;
+  }
+  return process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC1; 
+};
+
+
 const getTransporter = (doctorEmail) => {
+  const email = doctorEmail?.toLowerCase();
   let user, pass;
 
-  // Map doctor emails to their respective service credentials
-  if (doctorEmail?.toLowerCase() === 'shrileela@vetmeds.com') {
+  
+  if (email === 'shrileela@vetmeds.com') {
     user = process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC1;
     pass = process.env.NEXT_PUBLIC_SERVICE_PASS_DOC1;
-  } else if (doctorEmail?.toLowerCase() === 'omkar@vetmeds.com') {
+  } else if (email === 'omkar@vetmeds.com') {
     user = process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC2;
     pass = process.env.NEXT_PUBLIC_SERVICE_PASS_DOC2;
-  } else if (doctorEmail?.toLowerCase() === 'sanchit@vetmeds.com') {
+  } else if (email === 'sanchit@vetmeds.com') {
     user = process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC3;
     pass = process.env.NEXT_PUBLIC_SERVICE_PASS_DOC3;
   } else {
-    // Fallback to Doc1 credentials if no match
+    
     user = process.env.NEXT_PUBLIC_SERVICE_EMAIL_DOC1;
     pass = process.env.NEXT_PUBLIC_SERVICE_PASS_DOC1;
   }
@@ -33,9 +45,7 @@ const getTransporter = (doctorEmail) => {
   });
 };
 
-/**
- * Send an email using Nodemailer
- */
+
 export const sendEmail = async ({ to, subject, html, doctorEmail, attachments }) => {
   try {
     const transporter = getTransporter(doctorEmail);
@@ -57,9 +67,7 @@ export const sendEmail = async ({ to, subject, html, doctorEmail, attachments })
   }
 };
 
-/**
- * Template for New Appointment Notification (User -> Doctor)
- */
+
 export const getDoctorNotificationTemplate = (appointment) => {
   const petDetails = appointment.petProfileDetails ? JSON.parse(appointment.petProfileDetails) : {};
   
@@ -102,9 +110,7 @@ export const getDoctorNotificationTemplate = (appointment) => {
   `;
 };
 
-/**
- * Template for Appointment Status Update (Doctor -> User)
- */
+
 export const getUserNotificationTemplate = (appointment) => {
   const statusColor = appointment.status === 'confirmed' ? '#27ae60' : appointment.status === 'cancelled' ? '#c0392b' : '#2980b9';
   
@@ -164,7 +170,7 @@ export const getUserNotificationTemplate = (appointment) => {
     </div>
   `;
 };
-// EMERGENCY SOS NOTIFICATION TEMPLATE
+
 export const getEmergencyNotificationTemplate = (sos) => {
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 2px solid #e74c3c; border-radius: 10px; overflow: hidden;">
@@ -214,9 +220,7 @@ export const getEmergencyNotificationTemplate = (sos) => {
   `;
 };
 
-/**
- * Template for Contact Us Notification (User -> Support)
- */
+
 export const getContactNotificationTemplate = (contact) => {
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #1b3a34; border-radius: 10px; overflow: hidden;">

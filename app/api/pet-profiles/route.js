@@ -4,7 +4,7 @@ import { petProfiles, users } from '@/app/configs/schema';
 import { desc, eq } from 'drizzle-orm';
 
 
-// GET - Fetch pet profiles (optionally filtered by user email)
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -12,12 +12,12 @@ export async function GET(request) {
     
     let profiles;
     if (userEmail) {
-      // Filter profiles by user email
+      
       profiles = await db.select().from(petProfiles)
         .where(eq(petProfiles.ownerEmail, userEmail))
         .orderBy(desc(petProfiles.createdAt));
     } else {
-      // Fetch all profiles (fallback for admin or when no email provided)
+      
       profiles = await db.select().from(petProfiles).orderBy(desc(petProfiles.createdAt));
     }
     
@@ -31,14 +31,14 @@ export async function GET(request) {
   }
 }
 
-// POST - Create a new pet profile
+
 export async function POST(request) {
   try {
     const body = await request.json();
     
 
     
-    // Validate required fields
+    
     if (!body.petName || !body.species || !body.ownerName) {
       const missingFields = [];
       if (!body.petName) missingFields.push('petName');
@@ -81,12 +81,12 @@ export async function POST(request) {
 
 
 
-    // Grant 20 points to the user for creating a profile
+    
     try {
       if (body.ownerEmail) {
         let existingUser = await db.select().from(users).where(eq(users.email, body.ownerEmail));
         if (existingUser.length === 0) {
-          await db.insert(users).values({ id: body.ownerEmail, email: body.ownerEmail, name: body.ownerName, points: 30 }); // 10 def + 20
+          await db.insert(users).values({ id: body.ownerEmail, email: body.ownerEmail, name: body.ownerName, points: 30 }); 
         } else {
           await db.update(users).set({ points: existingUser[0].points + 20 }).where(eq(users.email, body.ownerEmail));
         }
@@ -114,7 +114,7 @@ export async function POST(request) {
   }
 }
 
-// PUT - Update an existing pet profile
+
 export async function PUT(request) {
   try {
     const body = await request.json();
@@ -129,7 +129,7 @@ export async function PUT(request) {
 
 
 
-    // Prepare data for update (handling parsing where necessary)
+    
     const valuesToUpdate = {
       petName: updateData.petName,
       species: updateData.species,
@@ -183,7 +183,7 @@ export async function PUT(request) {
   }
 }
 
-// DELETE - Delete a pet profile
+
 export async function DELETE(request) {
   try {
     const { searchParams } = new URL(request.url);

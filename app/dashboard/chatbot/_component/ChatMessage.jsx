@@ -9,7 +9,7 @@ function ChatMessage({ chat }) {
   if (chat.hideInChat) return null;
   const isBot = chat.role === "model";
   
-  // Special styling for the "Thinking..." message
+  
   const isThinking = isBot && chat.text === "Thinking...";
   
   return (

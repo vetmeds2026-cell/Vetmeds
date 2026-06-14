@@ -67,7 +67,6 @@ function AboutUs() {
 
   return (
     <div className="min-h-screen bg-[#fcf8ef] selection:bg-[#1b3a34] selection:text-white">
-      {/* Hero Section */}
       <section className="relative pt-12 pb-16 md:pt-20 md:pb-32 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-10">
           <div className="absolute top-0 left-0 w-72 h-72 bg-[#1b3a34] rounded-full blur-[120px]" />
@@ -106,8 +105,6 @@ function AboutUs() {
           >
             Your trusted digital sanctuary for comprehensive pet health advice. We bridge the gap between AI innovation and professional veterinary care.
           </motion.p>
-
-          {/* Stats Bar */}
           <motion.div
             variants={staggerContainer}
             initial="initial"
@@ -129,8 +126,6 @@ function AboutUs() {
           </motion.div>
         </div>
       </section>
-
-      {/* Mission Section */}
       <section className="py-12 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
@@ -184,8 +179,6 @@ function AboutUs() {
           </div>
         </div>
       </section>
-
-      {/* Values Section */}
       <section className="py-12 md:py-24 bg-[#fcf8ef]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 md:mb-16">
@@ -219,8 +212,6 @@ function AboutUs() {
           </motion.div>
         </div>
       </section>
-
-      {/* Banner Section */}
       <motion.section
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -238,8 +229,6 @@ function AboutUs() {
         />
         <div className="absolute inset-0  hover:bg-black/10 transition-colors duration-500" />
       </motion.section>
-
-      {/* Story Section */}
       <section className="py-12 md:py-24 bg-white overflow-hidden relative">
         <div className="absolute bottom-0 right-0 w-1/3 h-1/2 opacity-20 -z-10 group">
           <Image
@@ -294,7 +283,6 @@ function AboutUs() {
               viewport={{ once: true }}
               className="bg-[#1b3a34] text-[#fcf8ef] p-6 md:p-10 rounded-2xl md:rounded-3xl shadow-2xl relative overflow-hidden group"
             >
-              {/* Refined Background Logo */}
               <div className="absolute -bottom-20 -right-5 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-1000">
                 <Image src="/whitelogo.png" alt="Decoration" width={400} height={400} className="object-contain" />
               </div>
@@ -320,9 +308,6 @@ function AboutUs() {
         </div>
 
       </section>
-
-
-      {/* Floating CTA */}
       <Link href="/dashboard/chatbot">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -339,8 +324,6 @@ function AboutUs() {
               <PawPrint className="w-5 md:w-6 h-6 animate-pulse" />
             </div>
             <span className="hidden md:block font-bold pr-2">AI Assistant</span>
-
-            {/* Tooltip for small screens */}
             <div className="absolute bottom-full right-0 mb-4 px-4 py-2 bg-gray-900 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap md:hidden">
               Ask AI Assistant anything!
               <div className="absolute top-full right-5 w-0 h-0 border-8 border-transparent border-t-gray-900" />

@@ -22,16 +22,12 @@ function Header() {
 
   return (
     <header className='relative'>
-      {/* Main header - always visible */}
       <div className='flex justify-between items-center p-3 sm:p-4 md:px-5 shadow-md bg-white/50 backdrop-blur-sm'>
-        {/* Logo and brand name - Centered on mobile, left-aligned on desktop */}
         <div className="flex-1 md:flex-initial flex justify-center md:justify-start">
           <Link href="/" className='flex items-center cursor-pointer'>
             <Image src={'/logo1.png'} alt={'logo'} width={150} height={150} className="w-32 sm:w-32 md:w-32 lg:w-40" />
           </Link>
         </div>
-        
-        {/* Desktop navigation */}
         <div className='hidden md:flex items-center gap-6 lg:gap-8'>
           <Link href="/dashboard/aboutus">
             <span className='font-semibold cursor-pointer hover:text-[#1b3a34] transition-colors'>About us</span>
@@ -39,8 +35,6 @@ function Header() {
           <Link href="/dashboard/contactus">
             <span className='font-semibold cursor-pointer hover:text-[#1b3a34] transition-colors'>Contact us</span>
           </Link>
-          
-          {/* Doctor Login */}
           <Link href="/doctor-login">
             <span className='flex items-center gap-2 font-semibold cursor-pointer hover:text-[#1b3a34] transition-colors'>
               <FaUserMd />
@@ -54,8 +48,6 @@ function Header() {
             </Button>
           </Link>
         </div>
-        
-        {/* Mobile menu button - Pushed to right */}
         <div className="md:hidden flex-1 flex justify-end">
           <button 
             className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1b3a34] active:scale-90 transition-transform"
@@ -67,8 +59,6 @@ function Header() {
           </button>
         </div>
       </div>
-      
-      {/* Mobile menu - conditionally rendered */}
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white/50 backdrop-blur-sm shadow-lg z-50 py-4 px-6 flex flex-col gap-4 border-t border-gray-200 animate-slideDown">
           <Link href="/dashboard/aboutus" onClick={() => setMobileMenuOpen(false)}>

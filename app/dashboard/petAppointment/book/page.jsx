@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 import Image from 'next/image';
 import { useToast } from "@/components/ToastProvider";
 
-// Add the getImageBase64 function directly to this file
+
 const getImageBase64 = (url, maxWidth = 800) => {
   return new Promise((resolve) => {
     const img = new window.Image();
@@ -39,14 +39,14 @@ const getImageBase64 = (url, maxWidth = 800) => {
   });
 };
 
-// Doctor data (same as main page)
+
 const doctors = [
   {
     id: 1,
     name: "Dr. Shrileela",
     specialization: "Small Animal Surgery",
     experience: "15 years",
-    email: "Shrileela@vetmeds.com",
+    email: "shrileela@vetmeds.com",
     timeSlot: "morning",
     image: "/sara.jpg",
     description: "Expert in surgical procedures for small animals including cats, dogs, and rabbits.",
@@ -55,7 +55,7 @@ const doctors = [
   },
   {
     id: 2,
-    name: "Dr. Omkar Veershaiv Wangi",
+    name: "Dr. Omkar M. VeershaivWangi",
     specialization: "Emergency & Critical Care",
     experience: "12 years",
     email: "omkar@vetmeds.com",
@@ -100,7 +100,7 @@ function BookingPageContent() {
   const isSubmitting = useRef(false);
 
   useEffect(() => {
-    // Get URL parameters
+    
     const doctorId = searchParams.get('doctorId');
     const date = searchParams.get('date');
     const timeSlot = searchParams.get('timeSlot');
@@ -111,17 +111,17 @@ function BookingPageContent() {
       setSelectedDate(date);
       setSelectedTimeSlot(timeSlot);
 
-      // Generate available times based on time slot
+      
       generateAvailableTimes(timeSlot, date);
     }
 
-    // Fetch user's pet profiles
+    
     if (user?.primaryEmailAddress?.emailAddress) {
       fetchPetProfiles();
     }
   }, [searchParams, user]);
 
-  // Fetch booked appointments when doctor and date change
+  
   useEffect(() => {
     if (doctor && selectedDate) {
       fetchBookedAppointments();
@@ -143,9 +143,7 @@ function BookingPageContent() {
     }
   };
 
-  /**
-   * Fetch booked appointments for the selected doctor and date
-   */
+  
   const fetchBookedAppointments = async () => {
     try {
       const response = await fetch(`/api/appointments?doctorEmail=${encodeURIComponent(doctor.email)}&appointmentDate=${selectedDate}`);
@@ -163,7 +161,7 @@ function BookingPageContent() {
   const generateAvailableTimes = (timeSlot, selectedDateStr = '') => {
     let times = [];
     switch (timeSlot) {
-      case 'morning': // 10 AM - 6 PM
+      case 'morning': 
         times = [
           '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
           '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM',
@@ -171,7 +169,7 @@ function BookingPageContent() {
           '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM'
         ];
         break;
-      case 'evening': // 6 PM - 2 AM
+      case 'evening': 
         times = [
           '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM',
           '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM',
@@ -179,7 +177,7 @@ function BookingPageContent() {
           '12:00 AM', '12:30 AM', '01:00 AM', '01:30 AM'
         ];
         break;
-      case 'night': // 2 AM - 10 AM
+      case 'night': 
         times = [
           '02:00 AM', '02:30 AM', '03:00 AM', '03:30 AM',
           '04:00 AM', '04:30 AM', '05:00 AM', '05:30 AM',
@@ -225,7 +223,7 @@ function BookingPageContent() {
     const doc = new jsPDF({ compress: true });
     const logoBase64 = await getImageBase64('/logo2.png', 400);
 
-    // Header
+    
     doc.setFillColor(20, 150, 127);
     doc.rect(0, 0, 210, 40, 'F');
     doc.addImage(logoBase64, 'PNG', 15, 10, 30, 20, undefined, 'FAST');
@@ -234,7 +232,7 @@ function BookingPageContent() {
     doc.setFont(undefined, 'bold');
     doc.text('BOOKING RECEIPT', 105, 25, { align: 'center' });
 
-    // Clinic Info
+    
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
@@ -244,24 +242,24 @@ function BookingPageContent() {
     doc.text(clinicAddress, 195, 55, { align: 'right' });
     doc.text('Contact: +91 9876543210', 195, 60, { align: 'right' });
 
-    // Status Badge
+    
     doc.setFontSize(14);
     doc.setTextColor(20, 150, 127);
     doc.setFont(undefined, 'bold');
     doc.text(`Status: PENDING`, 20, 65);
 
-    // Info Sections
+    
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 70, 190, 70);
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
 
-    // Doctor & Date
+    
     const doctorNameFormatted = doctor.name.startsWith('Dr.') ? doctor.name : `Dr. ${doctor.name}`;
     doc.text(`Doctor: ${doctorNameFormatted}`, 20, 80);
     doc.text(`Date: ${new Date(selectedDate).toLocaleDateString()}`, 190, 80, { align: 'right' });
 
-    // Pet & Owner
+    
     doc.text(`Pet Name: ${selectedPet.petName}`, 20, 90);
     doc.text(`Owner: ${selectedPet.ownerName}`, 190, 90, { align: 'right' });
 
@@ -284,7 +282,7 @@ function BookingPageContent() {
     const problemLines = doc.splitTextToSize(petProblem || 'N/A', 170);
     doc.text(problemLines, 20, yPos);
 
-    // Footer
+    
     const pageHeight = doc.internal.pageSize.height;
     doc.setFillColor(20, 150, 127);
     doc.rect(0, pageHeight - 15, 210, 15, 'F');
@@ -292,7 +290,7 @@ function BookingPageContent() {
     doc.setFontSize(8);
     doc.text('VetMeds - Thank you for choosing us!', 105, pageHeight - 7, { align: 'center' });
 
-    // Save PDF
+    
     doc.save(`VetMeds_Receipt_${selectedPet.petName}_${new Date().getTime()}.pdf`);
   };
 
@@ -319,7 +317,7 @@ function BookingPageContent() {
     setLoading(true);
 
     try {
-      // Prepare pet profile details
+      
       const petDetails = `
 Pet Name: ${selectedPet.petName}
 Species: ${selectedPet.species}
@@ -332,7 +330,7 @@ Chronic Conditions: ${selectedPet.chronicConditions || 'None'}
 Current Medications: ${selectedPet.currentMedications || 'None'}
       `.trim();
 
-      // Create appointment in database
+      
       const appointmentData = {
         petName: selectedPet.petName,
         petProblem: petProblem,
@@ -363,13 +361,13 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
 
 
 
-      // Generate PDF (handled locally)
-      generatePDF(data.data);
+      
+      
 
       showToast('Appointment confirmed successfully!');
 
 
-      // Redirect back to appointments page
+      
       router.push('/dashboard/petAppointment');
 
     } catch (error) {
@@ -395,15 +393,12 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
   return (
     <div className="min-h-screen bg-[#fcf8ef] p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <button
           onClick={() => router.back()}
           className="mb-6 flex items-center gap-2 text-[#1b3a34] hover:text-[#1b3a34] font-semibold transition-colors"
         >
           <FaArrowLeft /> Back to Appointments
         </button>
-
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">
             <span className="text-[#1b3a34]">Confirm</span>
@@ -411,10 +406,7 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
           </h1>
           <p className="text-gray-600">Complete your booking with {doctor.name}</p>
         </div>
-
-        {/* Main Content */}
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Left Side - Doctor Info */}
           <div className="bg-white rounded-2xl shadow-xl p-8">
 
             <div>
@@ -444,8 +436,6 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
             </div>
 
             <p className="text-gray-700 leading-relaxed mb-6">{doctor.description}</p>
-
-            {/* Hospital Address */}
             <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl mb-4 border border-gray-100">
               <FaMapMarkerAlt className="text-red-500 mt-1 shrink-0" />
               <div>
@@ -453,8 +443,6 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
                 <p className="text-gray-500 text-xs">Karve Naka, Karad, Maharashtra 415110</p>
               </div>
             </div>
-
-            {/* Selected Date & Time Slot */}
             <div className="mt-6 p-4 bg-blue-50 rounded-lg">
               <h3 className="font-bold text-gray-800 mb-2">Selected Schedule:</h3>
               <p className="text-gray-700">
@@ -471,7 +459,6 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <form onSubmit={handleConfirmAppointment} className="space-y-6">
-              {/* Select Pet Profile */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3">
                   <FaPaw className="inline mr-2" />
@@ -496,8 +483,8 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
                         type="button"
                         onClick={() => setSelectedPet(pet)}
                         className={`p-4 rounded-lg border-2 text-left transition-all ${selectedPet?.id === pet.id
-                            ? 'border-[#1b3a34] bg-blue-50 shadow-md'
-                            : 'border-gray-300 hover:border-[#1b3a34] hover:shadow-sm'
+                          ? 'border-[#1b3a34] bg-blue-50 shadow-md'
+                          : 'border-gray-300 hover:border-[#1b3a34] hover:shadow-sm'
                           }`}
                       >
                         <div className="flex items-center gap-3">
@@ -522,8 +509,6 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
                   </div>
                 )}
               </div>
-
-              {/* Select Time */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3">
                   <FaClock className="inline mr-2" />
@@ -548,8 +533,6 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
                   ))}
                 </select>
               </div>
-
-              {/* Pet Problem */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3">
                   Describe the Problem *
@@ -563,8 +546,6 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
                   className="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1b3a34] focus:border-[#1b3a34] transition-all resize-none"
                 />
               </div>
-
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading || !selectedPet || !selectedTime || !petProblem.trim()}
@@ -592,7 +573,7 @@ Current Medications: ${selectedPet.currentMedications || 'None'}
   );
 }
 
-// Main component with Suspense wrapper
+
 export default function BookingPage() {
   return (
     <Suspense fallback={

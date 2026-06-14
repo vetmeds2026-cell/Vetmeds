@@ -45,7 +45,7 @@ function Sidebar({ closeMenu }) {
     {
       id: 2,
       name: "Paw Bot",
-      icon:<LuDog />,
+      icon: <LuDog />,
       path: "/dashboard/chatbot",
     },
     {
@@ -60,27 +60,32 @@ function Sidebar({ closeMenu }) {
       icon: <FaUserDoctor />,
       path: "/dashboard/petAppointment",
     },
-   
-   
+
+    ,
+    {
+      id: 5,
+      name: "Shopping",
+      icon: <MdOutlineShoppingCart />,
+      path: "/dashboard/shopping",
+    },
     {
       id: 6,
       name: "Contact Us",
       icon: <RiContactsLine />,
       path: "/dashboard/contactus",
     },
-   
+
   ];
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images] = useState([
-    '/pup.png','/cat5.png','/blackdog.png', '/parrot1.png','/rab.png', '/mac.png', '/kitty.png', 
-    '/enter.png',  '/cow.png','/goat.png','/hair.png','/ham.png','/horse.png','/buf.png'
+    '/pup.png', '/cat5.png', '/blackdog.png', '/parrot1.png', '/rab.png', '/mac.png',
   ]);
   const [shuffledImages, setShuffledImages] = useState([]);
 
   useEffect(() => {
     const shuffled = [...images].sort(() => Math.random() - 0.1);
     setShuffledImages(shuffled);
-    
+
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % shuffled.length);
     }, 10000);
@@ -131,15 +136,13 @@ function Sidebar({ closeMenu }) {
             <h2 className="font-bold text-sm">Emergency</h2>
           </div>
         </Link>
-        
-        {/* Professional Slideshow - Adjusted height to fit screen */}
-        <div className="relative h-[280px]  rounded-2xl overflow-hidden ">
+        <div className="relative h-[250px]  rounded-2xl overflow-hidden ">
           {shuffledImages.length > 0 ? shuffledImages.map((img, index) => (
-            <Image 
+            <Image
               key={img}
-              src={img} 
-              alt="pet" 
-              fill 
+              src={img}
+              alt="pet"
+              fill
               className={`object-cover transition-opacity duration-1000 ease-in-out ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
             />
           )) : (
@@ -148,8 +151,7 @@ function Sidebar({ closeMenu }) {
         </div>
       </div>
       <div className="flex flex-col gap-3 mt-auto">
-        {/* Kind Soulness Widget - Top */}
-        <div 
+        <div
           className="group relative flex items-center justify-between p-3 rounded-xl border border-pink-100 bg-pink-50/20 shadow-sm transition-all hover:shadow-md h-[56px] w-full cursor-pointer"
           onClick={() => setIsModalOpen(true)}
         >
@@ -160,24 +162,19 @@ function Sidebar({ closeMenu }) {
             </div>
           </div>
           <span className="flex justify-center items-center gap-1 font-bold bg-gradient-to-r bg-clip-text text-transparent from-indigo-500 via-purple-500 to-indigo-500 animate-text text-[13px]">{userPoints}<FaCoins className="text-yellow-600 text-sm " /></span>
-        
-          {/* Hover Information / Tooltip (Hidden on very small screens to avoid clash with mobile click, placed above widget) */}
           <div className="absolute bottom-full mb-2 left-0 w-full bg-white border border-pink-100 shadow-xl rounded-xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 text-left hidden md:block">
             <p className="text-[12px] leading-snug text-gray-600 mb-1">Earn points by caring for, adopting, and helping animals in need.</p>
             <p className="text-[12px] font-bold text-pink-500 flex items-center gap-1 hover:text-pink-600 transition-colors">Click to read more...</p>
-            {/* Triangle pointer pointing down */}
             <div className="absolute top-full left-6 -translate-y-1 w-3 h-3 bg-white border-r border-b border-pink-100 rotate-45"></div>
           </div>
         </div>
-
-        {/* Modal for Kind Soul Points */}
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}>
-            <div 
+            <div
               className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl relative animate-in fade-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
-              <button 
+              <button
                 onClick={(e) => { e.stopPropagation(); setIsModalOpen(false); }}
                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors bg-gray-50 hover:bg-gray-100 p-2 rounded-full"
               >
@@ -205,7 +202,7 @@ function Sidebar({ closeMenu }) {
                 </div>
 
                 <div>
-                   <h3 className="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base">
+                  <h3 className="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base">
                     How to earn points?
                   </h3>
                   <ul className="text-gray-600 text-xs md:text-sm mt-1.5 space-y-2">
@@ -217,7 +214,7 @@ function Sidebar({ closeMenu }) {
                 </div>
 
                 <div>
-                   <h3 className="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base">
+                  <h3 className="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base">
                     Benefits & Uses
                   </h3>
                   <p className="text-gray-600 text-xs md:text-sm mt-1 leading-relaxed">
@@ -227,7 +224,7 @@ function Sidebar({ closeMenu }) {
               </div>
 
               <div className="mt-6 flex justify-end">
-                <button 
+                <button
                   onClick={(e) => { e.stopPropagation(); setIsModalOpen(false); }}
                   className="px-5 py-2.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-medium text-sm rounded-xl shadow-md hover:shadow-lg transition-all w-full md:w-auto"
                 >
@@ -238,12 +235,12 @@ function Sidebar({ closeMenu }) {
           </div>
         )}
 
-        {/* User Account Button - Perfectly Matched to Kind Soul Style */}
+        
         <div className="w-full  flex items-center justify-center p-2 rounded-xl bg-gray-50 border border-gray-100">
           <div className="flex items-center  w-full ml-5">
-              <Image src={"/logo.png"} alt="logo" width={200} height={200} className="w-13 sm:w-13 md:w-13" />
-          
-            <UserButton 
+            <Image src={"/logo.png"} alt="logo" width={200} height={200} className="w-13 sm:w-13 md:w-13" />
+
+            <UserButton
               showName={true}
               appearance={{
                 elements: {

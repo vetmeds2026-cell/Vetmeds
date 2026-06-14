@@ -20,7 +20,7 @@ export const ToastProvider = ({ children }) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
     
-    // Automatically remove after 2 seconds
+    
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, 2000);

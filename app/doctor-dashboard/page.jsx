@@ -12,7 +12,7 @@ import Image from 'next/image';
 import { GiMedicines } from "react-icons/gi";
 import { useToast } from "@/components/ToastProvider";
 
-// Add the getImageBase64 function directly to this file
+
 const getImageBase64 = (url, maxWidth = 800) => {
   return new Promise((resolve) => {
     const img = new window.Image();
@@ -21,7 +21,7 @@ const getImageBase64 = (url, maxWidth = 800) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // Calculate new dimensions while maintaining aspect ratio
+      
       let width = img.width;
       let height = img.height;
 
@@ -44,18 +44,14 @@ const getImageBase64 = (url, maxWidth = 800) => {
   });
 };
 
-/**
- * Doctor Dashboard Component
- * Main dashboard for doctors to manage appointments and view pet information
- * Features: Sidebar navigation, appointment management, status updates, PDF generation
- */
+
 function DoctorDashboard() {
   const router = useRouter();
 
-  // State Management
+  
   const [doctorData, setDoctorData] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('home'); // home, all-appointments, previous, all-pets
+  const [activeTab, setActiveTab] = useState('home'); 
   const [appointments, setAppointments] = useState([]);
   const [petProfiles, setPetProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -66,9 +62,9 @@ function DoctorDashboard() {
   const [medicines, setMedicines] = useState([]);
   const [medicineSearch, setMedicineSearch] = useState('');
   const [customMedicine, setCustomMedicine] = useState({ name: '', type: '', disease: '' });
-  const [selectedCategory, setSelectedCategory] = useState(null); // 'animals' | 'birds'
-  const [selectedSubCategory, setSelectedSubCategory] = useState(null); // Species
-  const [selectedDisease, setSelectedDisease] = useState(null); // Disease
+  const [selectedCategory, setSelectedCategory] = useState(null); 
+  const [selectedSubCategory, setSelectedSubCategory] = useState(null); 
+  const [selectedDisease, setSelectedDisease] = useState(null); 
   const [emergencyAlerts, setEmergencyAlerts] = useState([]);
   const [loadingEmergencies, setLoadingEmergencies] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
@@ -79,7 +75,7 @@ function DoctorDashboard() {
   const { showToast } = useToast();
 
 
-  // Billing and points
+  
   const [showBillingModal, setShowBillingModal] = useState(false);
   const [selectedBillingAppointment, setSelectedBillingAppointment] = useState(null);
   const [pointsToDeduct, setPointsToDeduct] = useState('');
@@ -88,7 +84,7 @@ function DoctorDashboard() {
   const [loadingCollectedPoints, setLoadingCollectedPoints] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
   const [showPetModal, setShowPetModal] = useState(false);
-  const [confirmConfig, setConfirmConfig] = useState(null); // { title, message, icon, onConfirm, confirmLabel, confirmClass }
+  const [confirmConfig, setConfirmConfig] = useState(null); 
 
 
   useEffect(() => {
@@ -104,10 +100,7 @@ function DoctorDashboard() {
     document.title = `${activeTabName} | Doctor Dashboard | VetMeds`;
   }, [activeTab]);
 
-  /**
-   * Check authentication on component mount
-   * Redirect to login if not authenticated
-   */
+  
   useEffect(() => {
     const authData = localStorage.getItem('doctorAuth');
     if (!authData) {
@@ -115,18 +108,26 @@ function DoctorDashboard() {
     } else {
       let parsedAuth = JSON.parse(authData);
 
-      // Auto migrate old 'happytails.com' local storage sessions to 'vetmeds.com'
+      
+      let needsUpdate = false;
       if (parsedAuth.email === 'omkar@happytails.com' || parsedAuth.email === 'omkar@vetmed.com') {
         parsedAuth.email = 'omkar@vetmeds.com';
+        needsUpdate = true;
+      }
+
+      if (parsedAuth.email === 'omkar@vetmeds.com' && parsedAuth.name !== 'Omkar M. VeershaivWangi') {
+        parsedAuth.name = 'Omkar M. VeershaivWangi';
+        needsUpdate = true;
+      }
+
+      if (needsUpdate) {
         localStorage.setItem('doctorAuth', JSON.stringify(parsedAuth));
       }
       setDoctorData(parsedAuth);
     }
   }, []);
 
-  /**
-   * Fetch appointments when doctor data is loaded
-   */
+  
   useEffect(() => {
     if (doctorData) {
       fetchAppointments();
@@ -161,7 +162,7 @@ function DoctorDashboard() {
       const data = await res.json();
       if (data.success) {
         showToast(`Successfully sent ${data.count} collected records to Main Doctor (omkar@vetmeds.com)!`);
-        fetchCollectedPoints(); // Refresh table
+        fetchCollectedPoints(); 
       } else {
         showToast('Failed to transfer points.', 'error');
       }
@@ -283,21 +284,19 @@ function DoctorDashboard() {
   };
 
 
-  /**
-   * Fetch all appointments for the logged-in doctor
-   */
+  
   const fetchAppointments = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/appointments');
+      const response = await fetch(`/api/appointments?doctorEmail=${encodeURIComponent(doctorData.email)}`);
       const data = await response.json();
 
       if (data.success) {
-        // Filter appointments for this doctor and parse medicines
+        
         const doctorAppointments = data.data
-          .filter(apt => apt.doctorEmail === doctorData.email)
+          .filter(apt => apt.doctorEmail?.toLowerCase() === doctorData.email?.toLowerCase())
           .map(apt => {
-            // Parse medicines if it's a string
+            
             if (typeof apt.medicines === 'string') {
               try {
                 apt.medicines = JSON.parse(apt.medicines || '[]');
@@ -316,9 +315,7 @@ function DoctorDashboard() {
     }
   };
 
-  /**
-   * Fetch all pet profiles in the system
-   */
+  
   const fetchAllPetProfiles = async () => {
     try {
       const response = await fetch('/api/pet-profiles');
@@ -331,11 +328,7 @@ function DoctorDashboard() {
     }
   };
 
-  /**
-   * Update appointment status (confirmed/completed/cancelled)
-   * @param {number} id - Appointment ID
-   * @param {string} newStatus - New status value
-   */
+  
   const updateAppointmentStatus = async (id, newStatus) => {
     try {
       setLoading(true);
@@ -349,7 +342,7 @@ function DoctorDashboard() {
 
       if (data.success) {
         showToast(`Appointment status updated to ${newStatus.toUpperCase()}!`);
-        fetchAppointments(); // Refresh appointments
+        fetchAppointments(); 
       } else {
         showToast('Failed to update status: ' + data.error, 'error');
       }
@@ -361,9 +354,7 @@ function DoctorDashboard() {
     }
   };
 
-  /**
-   * Generate PDF with updated appointment status
-   */
+  
   const openBillingModal = async (appointment) => {
     setSelectedBillingAppointment(appointment);
     try {
@@ -397,7 +388,7 @@ function DoctorDashboard() {
       });
       const data = await res.json();
       if (data.success) {
-        // 1. Log this collection in the collected_points tracker
+        
         try {
           await fetch('/api/collected-points', {
             method: 'POST',
@@ -409,14 +400,15 @@ function DoctorDashboard() {
               doctorEmail: doctorData.email,
               doctorName: doctorData.name,
               points: Math.abs(pointsToDeduct),
-              petIssue: selectedBillingAppointment.petProblem
+              petIssue: selectedBillingAppointment.petProblem,
+              appointmentId: selectedBillingAppointment.id
             })
           });
         } catch (postErr) {
           console.warn('Failed to post collected points log', postErr);
         }
 
-        // 2. Mark appointment as points deducted to prevent double billing
+        
         try {
           await fetch('/api/appointments', {
             method: 'PATCH',
@@ -431,8 +423,8 @@ function DoctorDashboard() {
         }
 
         showToast('Points deducted successfully!');
-        fetchAppointments(); // Refresh local list and flag
-        fetchCollectedPoints(); // Refresh backend ledger
+        fetchAppointments(); 
+        fetchCollectedPoints(); 
         setUserPointsBalance(data.data.points);
         setPointsToDeduct('');
         setShowBillingModal(false);
@@ -447,27 +439,24 @@ function DoctorDashboard() {
     }
   };
 
-  /**
-   * Generate PDF with updated appointment status
-   * @param {object} appointment - Appointment object
-   */
+  
   const generateUpdatedPDF = async (appointment) => {
     const doc = new jsPDF({ compress: true });
-    const logoBase64 = await getImageBase64('/logo2.png', 400); // Resize logo for PDF
+    const logoBase64 = await getImageBase64('/logo2.png', 400); 
 
-    // Parse pet details
+    
     let petDetails = {};
     try {
       petDetails = appointment.petProfileDetails ? JSON.parse(appointment.petProfileDetails) : {};
     } catch (e) { petDetails = {}; }
 
-    // Parse medicines
+    
     let medicines = [];
     try {
       medicines = typeof appointment.medicines === 'string' ? JSON.parse(appointment.medicines) : (appointment.medicines || []);
     } catch (e) { medicines = []; }
 
-    // Header
+    
     doc.setFillColor(20, 150, 127);
     doc.rect(0, 0, 210, 40, 'F');
     doc.addImage(logoBase64, 'PNG', 15, 10, 30, 20, undefined, 'FAST');
@@ -476,7 +465,7 @@ function DoctorDashboard() {
     doc.setFont(undefined, 'bold');
     doc.text('APPOINTMENT REPORT', 105, 25, { align: 'center' });
 
-    // Clinic Info
+    
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
@@ -486,31 +475,31 @@ function DoctorDashboard() {
     doc.text(clinicAddress, 195, 55, { align: 'right' });
     doc.text('Contact: +91 9876543210', 195, 60, { align: 'right' });
 
-    // Status Badge
+    
     doc.setFontSize(14);
     doc.setTextColor(20, 150, 127);
     doc.setFont(undefined, 'bold');
     doc.text(`Status: ${appointment.status?.toUpperCase()}`, 20, 65);
 
-    // Kind Soulness Points
+    
     if (appointment.pointsCollected) {
       doc.setFontSize(9);
-      doc.setTextColor(219, 39, 119); // Pink-600
+      doc.setTextColor(219, 39, 119); 
       doc.text(`Kind Soulness Contribution: ${appointment.pointsCollected} Points`, 195, 65, { align: 'right' });
-      doc.setTextColor(0, 0, 0); // Reset color
+      doc.setTextColor(0, 0, 0); 
     }
 
-    // Info Sections
+    
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 70, 190, 70);
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
 
-    // Doctor & Date
+    
     doc.text(`Doctor: ${appointment.doctorName.startsWith('Dr.') ? appointment.doctorName : `Dr. ${appointment.doctorName}`}`, 20, 80);
     doc.text(`Date: ${new Date(appointment.appointmentDate).toLocaleDateString()}`, 190, 80, { align: 'right' });
 
-    // Pet & Owner
+    
     doc.text(`Pet Name: ${appointment.petName}`, 20, 90);
     doc.text(`Owner: ${appointment.ownerName}`, 190, 90, { align: 'right' });
 
@@ -535,7 +524,7 @@ function DoctorDashboard() {
 
     yPos += (problemLines.length * 7) + 10;
 
-    // Prescribed Medicines
+    
     if (medicines.length > 0) {
       doc.setFont(undefined, 'bold');
       doc.setFontSize(14);
@@ -565,7 +554,7 @@ function DoctorDashboard() {
       });
     }
 
-    // Footer
+    
     const pageHeight = doc.internal.pageSize.height;
     doc.setFillColor(20, 150, 127);
     doc.rect(0, pageHeight - 15, 210, 15, 'F');
@@ -576,10 +565,7 @@ function DoctorDashboard() {
     doc.save(`VetMeds_Report_${appointment.petName}_${appointment.id}.pdf`);
   };
 
-  /**
-   * Handle logout
-   * Clear localStorage and redirect to login
-   */
+  
   const handleLogout = () => {
     if (confirm('Are you sure you want to logout?')) {
       showToast('Logging out...', 'info');
@@ -588,17 +574,13 @@ function DoctorDashboard() {
     }
   };
 
-  /**
-   * View appointment details in modal
-   */
+  
   const viewDetails = (appointment) => {
     setSelectedAppointment(appointment);
     setShowDetailModal(true);
   };
 
-  /**
-   * Get appointments based on active tab
-   */
+  
   const getFilteredAppointments = () => {
     if (activeTab === 'all-appointments') {
       return appointments.filter(apt => apt.status === 'pending');
@@ -610,7 +592,7 @@ function DoctorDashboard() {
     return appointments;
   };
 
-  // Detailed medicine data organized hierarchically
+  
   const medicineCategories = {
     animals: [
       {
@@ -764,11 +746,9 @@ function DoctorDashboard() {
     ]
   };
 
-  /**
-   * Filtered medicines based on search term and hierarchical selection
-   */
+  
   const getFilteredMedicineOptions = () => {
-    // If searching, show all matching medicines regardless of hierarchy
+    
     if (medicineSearch) {
       const allMedicines = [];
       [...medicineCategories.animals, ...medicineCategories.birds].forEach(cat => {
@@ -783,7 +763,7 @@ function DoctorDashboard() {
       );
     }
 
-    // If a disease is selected, show medicines for that disease
+    
     if (selectedDisease && selectedSubCategory && selectedCategory) {
       const subCat = medicineCategories[selectedCategory].find(c => c.name === selectedSubCategory);
       return subCat?.diseases[selectedDisease] || [];
@@ -792,18 +772,16 @@ function DoctorDashboard() {
     return [];
   };
 
-  /**
-   * Open medicine modal for an appointment
-   */
+  
   const openMedicineModal = (appointment) => {
     setSelectedMedicineAppointment(appointment);
 
-    // Initialize hierarchy selection based on pet species
+    
     const species = (appointment.petProfileDetails ?
       JSON.parse(appointment.petProfileDetails).species?.toLowerCase() :
       'other') || 'other';
 
-    // Try to auto-select hierarchy
+    
     let found = false;
     for (const cat of ['animals', 'birds']) {
       const match = medicineCategories[cat].find(c =>
@@ -824,7 +802,7 @@ function DoctorDashboard() {
     }
     setSelectedDisease(null);
 
-    // Handle both string and array formats for medicines
+    
     let existingMedicines = [];
     try {
       if (Array.isArray(appointment.medicines)) {
@@ -841,17 +819,13 @@ function DoctorDashboard() {
     setShowMedicineModal(true);
   };
 
-  /**
-   * Add a new medicine to the list
-   */
+  
   const addMedicine = (medicine) => {
     setMedicines(prev => [...prev, { ...medicine, dosage: '', duration: '' }]);
     showToast(`${medicine.name} added to prescription`, 'success');
   };
 
-  /**
-   * Update medicine details
-   */
+  
   const updateMedicine = (index, field, value) => {
     setMedicines(prev => {
       const updated = [...prev];
@@ -860,16 +834,12 @@ function DoctorDashboard() {
     });
   };
 
-  /**
-   * Remove a medicine from the list
-   */
+  
   const removeMedicine = (index) => {
     setMedicines(prev => prev.filter((_, i) => i !== index));
   };
 
-  /**
-   * Save prescribed medicines for an appointment
-   */
+  
   const saveMedicines = async () => {
     if (!selectedMedicineAppointment) return;
 
@@ -889,7 +859,7 @@ function DoctorDashboard() {
       if (data.success) {
         showToast('Medicines saved successfully!');
         setShowMedicineModal(false);
-        fetchAppointments(); // Refresh appointments to show updated data
+        fetchAppointments(); 
       } else {
         showToast('Failed to save medicines: ' + data.error, 'error');
       }
@@ -901,14 +871,12 @@ function DoctorDashboard() {
     }
   };
 
-  /**
-   * Generate a dedicated Prescription PDF for medicine only
-   */
+  
   const generatePrescriptionPDF = async (appointment) => {
     const doc = new jsPDF({ compress: true });
     const logoBase64 = await getImageBase64('/logo2.png', 400);
 
-    // Header
+    
     doc.setFillColor(20, 150, 127);
     doc.rect(0, 0, 210, 40, 'F');
     doc.addImage(logoBase64, 'PNG', 15, 10, 30, 20, undefined, 'FAST');
@@ -917,7 +885,7 @@ function DoctorDashboard() {
     doc.setFont(undefined, 'bold');
     doc.text('MEDICAL PRESCRIPTION', 105, 25, { align: 'center' });
 
-    // Clinic Info
+    
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
@@ -927,12 +895,12 @@ function DoctorDashboard() {
     doc.text(clinicAddress, 195, 55, { align: 'right' });
     doc.text('Contact: +91 9876543210', 195, 60, { align: 'right' });
 
-    // Rx Symbol
+    
     doc.setFontSize(30);
     doc.setTextColor(20, 150, 127);
     doc.text('Rx', 20, 65);
 
-    // Doctor & Patient Info
+    
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 70, 190, 70);
     doc.setFontSize(11);
@@ -947,7 +915,7 @@ function DoctorDashboard() {
 
     doc.line(20, 95, 190, 95);
 
-    // Prescription Box
+    
     let yPos = 110;
     doc.setFontSize(14);
     doc.text('Prescribed Medications:', 20, yPos);
@@ -985,7 +953,7 @@ function DoctorDashboard() {
       });
     }
 
-    // Advice
+    
     yPos += 20;
     doc.setFont(undefined, 'bold');
     doc.text('General Advice:', 20, yPos);
@@ -995,13 +963,13 @@ function DoctorDashboard() {
     yPos += 5;
     doc.text('2. Ensure fresh water is always available for your pet.', 20, yPos);
 
-    // Signature Area
+    
     const pageHeight = doc.internal.pageSize.height;
     doc.line(140, pageHeight - 40, 190, pageHeight - 40);
     doc.setFont(undefined, 'bold');
     doc.text('Doctor Signature', 165, pageHeight - 35, { align: 'center' });
 
-    // Footer
+    
     doc.setFillColor(20, 150, 127);
     doc.rect(0, pageHeight - 15, 210, 15, 'F');
     doc.setTextColor(255, 255, 255);
@@ -1011,7 +979,7 @@ function DoctorDashboard() {
     doc.save(`Prescription_${appointment.petName}_${new Date().toLocaleDateString()}.pdf`);
   };
 
-  // Loading state
+  
   if (!doctorData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -1025,20 +993,16 @@ function DoctorDashboard() {
 
   return (
     <div className="min-h-screen bg-[#fcf8ef]">
-      {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden animate-fadeIn"
           onClick={() => setSidebarOpen(false)}
         />
       )}
-
-      {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 h-full w-64 bg-[#1b3a34] text-[#fcf8ef] shadow-2xl transform transition-transform duration-300 z-40 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0`}
       >
-        {/* Doctor Profile Section */}
         <div className="p-6 border-b border-white/20">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-16 h-16  flex items-center justify-center">
@@ -1052,10 +1016,7 @@ function DoctorDashboard() {
             </div>
           </div>
         </div>
-
-        {/* Navigation Menu */}
         <nav className="p-4 space-y-2">
-          {/* Home */}
           <button
             onClick={() => { setActiveTab('home'); setSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'home'
@@ -1066,8 +1027,6 @@ function DoctorDashboard() {
             <FaHome size={20} />
             <span className="font-semibold">Home</span>
           </button>
-
-          {/* All Appointments */}
           <button
             onClick={() => { setActiveTab('all-appointments'); setSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'all-appointments'
@@ -1083,8 +1042,6 @@ function DoctorDashboard() {
               </span>
             )}
           </button>
-
-          {/* Previous Appointments */}
           <button
             onClick={() => { setActiveTab('previous'); setSidebarOpen(false); }}
             className={`w-full flex gap-1 items-center px-4 py-3 rounded-lg transition-all ${activeTab === 'previous'
@@ -1095,8 +1052,6 @@ function DoctorDashboard() {
             <FaHistory size={15} />
             <span className="font-semibold">Previous Appointments</span>
           </button>
-
-          {/* All Pets */}
           <button
             onClick={() => { setActiveTab('all-pets'); setSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'all-pets'
@@ -1107,8 +1062,6 @@ function DoctorDashboard() {
             <FaPaw size={20} />
             <span className="font-semibold">All Pets</span>
           </button>
-
-          {/* Emergency SOS */}
           <button
             onClick={() => { setActiveTab('emergency-sos'); setSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'emergency-sos'
@@ -1124,8 +1077,6 @@ function DoctorDashboard() {
               </span>
             )}
           </button>
-
-          {/* Collected Points */}
           <button
             onClick={() => { setActiveTab('collected-points'); setSidebarOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'collected-points'
@@ -1136,9 +1087,6 @@ function DoctorDashboard() {
             <FaHandHoldingHeart size={20} className={activeTab === 'collected-points' ? 'text-[#1b3a34]' : 'text-yellow-400'} />
             <span className="font-semibold">Collected Points</span>
           </button>
-
-
-          {/* Logout */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-500/20 transition-all mt-8"
@@ -1148,14 +1096,9 @@ function DoctorDashboard() {
           </button>
         </nav>
       </aside>
-
-      {/* Main Content */}
       <div className="md:ml-64 min-h-screen">
-        {/* Header */}
         <header className="bg-white/90 backdrop-blur-md sticky top-0 z-20 flex flex-row items-center justify-between shadow-sm border-b border-gray-100 px-4 py-2 sm:py-0 h-16 sm:h-20">
-          {/* Left Side: Toggle & Title */}
           <div className="flex items-center gap-3">
-            {/* Mobile Sidebar Toggle */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="md:hidden bg-[#1b3a34] text-[#fcf8ef] p-2 rounded-xl shadow-md active:scale-95 transition-all"
@@ -1181,8 +1124,6 @@ function DoctorDashboard() {
               </p>
             </div>
           </div>
-
-          {/* Right Side: Profile & Logo */}
           <div className="flex items-center ">
             <div className=" flex items-center mr-4">
               <Image src={'/logo1.png'} alt="logo" width={120} height={100} className="w-40 h-auto object-contain " />
@@ -1202,13 +1143,9 @@ function DoctorDashboard() {
             </div>
           </div>
         </header>
-
-        {/* Content Area */}
         <main className="p-4 md:p-8">
-          {/* Home Tab - Dashboard Overview */}
           {activeTab === 'home' && (
             <div className="space-y-6">
-              {/* Statistics Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
                   <div className="flex items-center justify-between">
@@ -1261,14 +1198,10 @@ function DoctorDashboard() {
 
                 </div>
               </div>
-
-              {/* Welcome Message */}
               <div className="bg-[#1b3a34] rounded-xl shadow-lg p-8 text-[#fcf8ef]">
                 <h2 className="text-3xl font-bold mb-2">Welcome back, {doctorData.name}!</h2>
                 <p className="text-lg">You have {appointments.filter(a => a.status === 'pending').length} pending appointments waiting for your attention.</p>
               </div>
-
-              {/* Recent Appointments */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-2xl font-bold text-[#1b3a34] mb-4">Recent Appointments</h3>
                 {appointments.slice(0, 5).length === 0 ? (
@@ -1295,8 +1228,6 @@ function DoctorDashboard() {
               </div>
             </div>
           )}
-
-          {/* All Appointments Tab */}
           {(activeTab === 'all-appointments' || activeTab === 'previous') && (
             <div className="bg-white rounded-xl shadow-lg p-6">
               {loading ? (
@@ -1427,8 +1358,6 @@ function DoctorDashboard() {
                       </tbody>
                     </table>
                   </div>
-
-                  {/* Mobile Card View */}
                   <div className="grid grid-cols-1 gap-4 md:hidden">
                     {getFilteredAppointments().map((apt) => (
                       <div key={apt.id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 shadow-sm space-y-4">
@@ -1540,8 +1469,6 @@ function DoctorDashboard() {
               )}
             </div>
           )}
-
-          {/* All Pets Tab */}
           {activeTab === 'all-pets' && (
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h3 className="text-2xl font-bold text-[#1b3a34] mb-6">All Registered Pets</h3>
@@ -1558,13 +1485,17 @@ function DoctorDashboard() {
                       className="bg-[#fcf8ef] rounded-xl shadow-md p-6 border-2 border-[#1b3a34]/10 hover:border-[#1b3a34]/50 hover:shadow-xl transition-all cursor-pointer group"
                       onClick={() => { setSelectedPet(pet); setShowPetModal(true); }}
                     >
-                      {pet.petImageUrl && (
-                        <img
-                          src={pet.petImageUrl}
-                          alt={pet.petName}
-                          className="w-full h-48 object-cover rounded-lg mb-4 border border-[#1b3a34]/10 group-hover:scale-[1.02] transition-transform"
-                        />
-                      )}
+                      <div className="w-full h-48 bg-white rounded-lg mb-4 border border-[#1b3a34]/10 overflow-hidden flex items-center justify-center">
+                        {pet.petImageUrl ? (
+                          <img
+                            src={pet.petImageUrl}
+                            alt={pet.petName}
+                            className="w-full h-full object-contain group-hover:scale-[1.05] transition-transform duration-500"
+                          />
+                        ) : (
+                          <FaPaw className="text-4xl text-[#1b3a34]/20" />
+                        )}
+                      </div>
                       <h4 className="text-2xl font-bold text-[#1b3a34] mb-2">{pet.petName}</h4>
                       <p className="text-[#1b3a34]/80 font-semibold mb-2">{pet.species} • {pet.breed || 'Mixed'}</p>
                       <div className="space-y-1 text-sm text-[#1b3a34]/90">
@@ -1580,8 +1511,6 @@ function DoctorDashboard() {
               )}
             </div>
           )}
-
-          {/* Emergency SOS Tab */}
           {activeTab === 'emergency-sos' && (
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex justify-between items-center mb-6">
@@ -1627,14 +1556,10 @@ function DoctorDashboard() {
                               <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Reported By</p>
                               <p className="font-bold text-gray-800">{sos.userName}</p>
                               <p className="text-sm text-[#1b3a34]">{sos.userEmail}</p>
-
-                              {/* Points Display */}
                               <div className="mt-2 flex items-center gap-2">
                                 <FaHandHoldingHeart className="text-yellow-500" />
                                 <span className="text-sm font-bold text-gray-700">{sos.userStatus?.points || 0} pts</span>
                               </div>
-
-                              {/* Block Status Overlay */}
                               {sos.userStatus?.isBlocked && (
                                 <div className="mt-3 p-2 bg-red-100 border border-red-200 rounded-lg">
                                   <p className="text-[10px] font-black text-red-600 uppercase tracking-tighter flex items-center gap-1">
@@ -1648,8 +1573,6 @@ function DoctorDashboard() {
                                 </div>
                               )}
                             </div>
-
-                            {/* Penalty History (Conditional) */}
                             {sos.penalties && sos.penalties.length > 0 && (
                               <div className="bg-orange-50 p-3 rounded-lg border border-orange-100 overflow-y-auto max-h-[120px]">
                                 <p className="text-[10px] text-orange-600 font-black uppercase tracking-wider mb-1">Previous Penalties</p>
@@ -1690,10 +1613,7 @@ function DoctorDashboard() {
                             </div>
                           </div>
                         </div>
-
-                        {/* Action Buttons Column */}
                         <div className="flex-shrink-0 flex flex-col gap-3 min-w-[200px]">
-                          {/* Emergency Photo */}
                           {sos.imageUrl && (
                             <div className="text-center lg:text-left">
                               <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Emergency Photo</p>
@@ -1705,8 +1625,6 @@ function DoctorDashboard() {
                               />
                             </div>
                           )}
-
-                          {/* Resolve Button - Only for Boss */}
                           {(doctorData.email === 'omkar@vetmeds.com') && sos.status === 'pending' && (
                             <button
                               onClick={() => resolveEmergency(sos.id)}
@@ -1715,8 +1633,6 @@ function DoctorDashboard() {
                               <FaCheckCircle /> RESOLVE INCIDENT
                             </button>
                           )}
-
-                          {/* Block/Unblock Buttons - For authorized doctor */}
                           {(doctorData.email === 'omkar@vetmeds.com') && (
                             sos.userStatus?.isBlocked ? (
                               <button
@@ -1745,8 +1661,6 @@ function DoctorDashboard() {
               )}
             </div>
           )}
-
-          {/* Collected Points Tab */}
           {activeTab === 'collected-points' && (
             <div className="space-y-6">
               <div className="bg-[#1b3a34] rounded-xl shadow-lg p-8 text-[#fcf8ef] flex flex-col md:flex-row items-center justify-between gap-6">
@@ -1763,8 +1677,6 @@ function DoctorDashboard() {
                   </p>
                 </div>
               </div>
-
-              {/* Data Table */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
                   <h3 className="text-2xl font-bold text-[#1b3a34]">Points History</h3>
@@ -1843,12 +1755,9 @@ function DoctorDashboard() {
           )}
         </main>
       </div>
-
-      {/* Pet Profile Detail Modal */}
       {showPetModal && selectedPet && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn" onClick={() => setShowPetModal(false)}>
           <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-100" onClick={e => e.stopPropagation()}>
-            {/* Header */}
             <div className="bg-[#1b3a34] text-[#fcf8ef] p-5 sm:p-6 flex items-center justify-between shadow-lg">
               <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
                 <FaPaw size={20} className="text-yellow-400" /> {selectedPet.petName}'s Profile
@@ -1856,14 +1765,21 @@ function DoctorDashboard() {
               <button onClick={() => setShowPetModal(false)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-all text-2xl font-bold">×</button>
             </div>
 
-            {/* Body */}
+            
             <div className="overflow-y-auto p-5 sm:p-8 space-y-6 bg-gray-50/40">
-              {/* Pet Image */}
-              {selectedPet.petImageUrl && (
-                <img src={selectedPet.petImageUrl} alt={selectedPet.petName} className="w-full h-56 object-cover rounded-2xl border border-[#1b3a34]/10 shadow-sm" />
-              )}
+              <div className="w-full h-80 bg-white rounded-2xl border border-[#1b3a34]/10 shadow-sm overflow-hidden flex items-center justify-center">
+                {selectedPet.petImageUrl ? (
+                  <img
+                    src={selectedPet.petImageUrl}
+                    alt={selectedPet.petName}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <FaPaw className="text-6xl text-[#1b3a34]/10" />
+                )}
+              </div>
 
-              {/* Basic Info */}
+              
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {[['Name', selectedPet.petName], ['Species', selectedPet.species], ['Breed', selectedPet.breed || 'Mixed'], ['Gender', selectedPet.gender || 'N/A'], ['Age', selectedPet.age ? `${selectedPet.age} yrs` : 'N/A'], ['Weight', selectedPet.weight || 'N/A'], ['Color / Markings', selectedPet.colorMarkings || 'N/A'], ['Date of Birth', selectedPet.dateOfBirth || 'N/A'], ['Last Vet Visit', selectedPet.lastVetVisitDate || 'N/A']].map(([label, val]) => (
                   <div key={label} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
@@ -1873,7 +1789,7 @@ function DoctorDashboard() {
                 ))}
               </div>
 
-              {/* Medical Info */}
+              
               <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b pb-2">Medical &amp; Health</h3>
                 <div className="grid sm:grid-cols-2 gap-3 text-sm">
@@ -1884,7 +1800,7 @@ function DoctorDashboard() {
                 </div>
               </div>
 
-              {/* Lifestyle */}
+              
               <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b pb-2">Lifestyle &amp; Care</h3>
                 <div className="grid sm:grid-cols-2 gap-3 text-sm">
@@ -1895,7 +1811,7 @@ function DoctorDashboard() {
                 </div>
               </div>
 
-              {/* Owner Info */}
+              
               <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b pb-2">Owner Information</h3>
                 <div className="grid sm:grid-cols-2 gap-3 text-sm">
@@ -1907,7 +1823,7 @@ function DoctorDashboard() {
               </div>
             </div>
 
-            {/* Footer */}
+            
             <div className="p-4 bg-white border-t border-gray-100 flex justify-end">
               <button onClick={() => setShowPetModal(false)} className="px-8 py-3 bg-[#1b3a34] text-white font-bold rounded-xl active:scale-95 transition-all shadow-lg">Close</button>
             </div>
@@ -1915,7 +1831,7 @@ function DoctorDashboard() {
         </div>
       )}
 
-      {/* ── Custom Confirm Modal ───────────────────────────── */}
+      
       {confirmConfig && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 border border-gray-100">
@@ -1942,7 +1858,7 @@ function DoctorDashboard() {
         </div>
       )}
 
-      {/* Block User Selection Modal */}
+      
       {showBlockModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 border border-red-50">
@@ -2007,7 +1923,7 @@ function DoctorDashboard() {
         </div>
       )}
 
-      {/* Appointment Detail Modal (Existing) */}
+      
       {showDetailModal && selectedAppointment && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-100">
@@ -2075,7 +1991,7 @@ function DoctorDashboard() {
         </div>
       )}
 
-      {/* Billing Points Modal */}
+      
       {showBillingModal && selectedBillingAppointment && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-100">
@@ -2139,7 +2055,7 @@ function DoctorDashboard() {
         </div>
       )}
 
-      {/* Medicine Modal */}
+      
       {showMedicineModal && selectedMedicineAppointment && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-gray-100">
@@ -2163,7 +2079,7 @@ function DoctorDashboard() {
 
             <div className="flex-grow overflow-y-auto p-4 sm:p-8 bg-gray-50/30">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Side - Selection */}
+                
                 <div className="lg:col-span-2 space-y-6">
                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                     <div className="relative">
@@ -2199,7 +2115,7 @@ function DoctorDashboard() {
                     </div>
 
                     <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                      {/* Category Selection */}
+                      
                       {!selectedCategory && !medicineSearch && (
                         <>
                           <button
@@ -2225,7 +2141,7 @@ function DoctorDashboard() {
                         </>
                       )}
 
-                      {/* Species Selection */}
+                      
                       {selectedCategory && !selectedSubCategory && !medicineSearch && (
                         medicineCategories[selectedCategory].map((sub) => (
                           <button
@@ -2244,7 +2160,7 @@ function DoctorDashboard() {
                         ))
                       )}
 
-                      {/* Disease Selection */}
+                      
                       {selectedSubCategory && !selectedDisease && !medicineSearch && (
                         Object.keys(medicineCategories[selectedCategory].find(c => c.name === selectedSubCategory).diseases).map((disease) => (
                           <button
@@ -2260,7 +2176,7 @@ function DoctorDashboard() {
                         ))
                       )}
 
-                      {/* Medicine List */}
+                      
                       {(selectedDisease || medicineSearch) && (
                         getFilteredMedicineOptions().map((medicine) => (
                           <button
@@ -2280,7 +2196,7 @@ function DoctorDashboard() {
                     </div>
                   </div>
 
-                  {/* Custom Entry */}
+                  
                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <h4 className="text-xs font-black text-gray-400 uppercase mb-4 tracking-widest flex items-center gap-2">
                       Manual Prescription Entry
@@ -2314,7 +2230,7 @@ function DoctorDashboard() {
                   </div>
                 </div>
 
-                {/* Right Side - Prescribed List */}
+                
                 <div className="space-y-6">
                   <div className="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col h-full min-h-[400px]">
                     <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">

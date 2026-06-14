@@ -18,7 +18,7 @@ function Chatbot() {
   const { showToast } = useToast();
 
 
-  // Chat States
+  
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([{
     hideInChat: true,
@@ -26,25 +26,25 @@ function Chatbot() {
     text: Info
   }]);
 
-  // History & Sidebar States
+  
   const [savedChats, setSavedChats] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
-  // Image Upload States
+  
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Initialize and fetch history
+  
   useEffect(() => {
     if (user?.primaryEmailAddress?.emailAddress) {
       fetchSavedChats();
     }
   }, [user]);
 
-  // Scroll to bottom on new message
+  
   useEffect(() => {
     if (ChatbodyRef.current) {
       ChatbodyRef.current.scrollTo({ top: ChatbodyRef.current.scrollHeight, behavior: "smooth" });
@@ -86,9 +86,9 @@ function Chatbot() {
 
       const email = user.primaryEmailAddress.emailAddress;
 
-      // If we don't have an active chat ID, we CREATE one
+      
       if (!activeChatId) {
-        // Generate name from first user message if unprovided
+        
         const chatName = newChatName || historyToSave.find(m => m.role === 'user')?.text?.substring(0, 30) + '...' || 'New Chat';
 
         const res = await fetch('/api/chats', {
@@ -108,18 +108,18 @@ function Chatbot() {
           setSavedChats(prev => [data.data, ...prev]);
         }
       } else {
-        // We UPDATE the existing DB chat
+        
         const res = await fetch('/api/chats', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: activeChatId,
-            chatName: newChatName, // Optional
+            chatName: newChatName, 
             chatHistory: JSON.stringify(historyToSave)
           })
         });
         if (res.ok) {
-          // Update the localized savedChats array
+          
           setSavedChats(prev => prev.map(c =>
             c.id === activeChatId ? { ...c, chatHistory: JSON.stringify(historyToSave), ...(newChatName && { chatName: newChatName }) } : c
           ));
@@ -180,7 +180,7 @@ function Chatbot() {
     }
   };
 
-  // Cloudinary Upload Logic
+  
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -191,7 +191,7 @@ function Chatbot() {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "next_upload"); // Replace if you use a different preset
+    formData.append("upload_preset", "chatbot"); 
     formData.append("folder", "chatbot");
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -204,7 +204,7 @@ function Chatbot() {
     return data.secure_url;
   };
 
-  // Convert File to Base64 for Gemini Vision
+  
   const fileToBase64 = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -213,7 +213,7 @@ function Chatbot() {
   });
 
   const generateResponse = async (historyToGemini, imageBase64 = null, imageMime = null, cloudinaryUrl = null) => {
-    // Determine the exact instructions to inject
+    
     let systemInstruction = `\n\n(INSTRUCTIONS: Please format your response professionally using Markdown. Use clearly bolded headlines, styled bullet points, and actionable step-by-step instructions. `;
     if (imageBase64) {
       systemInstruction += `The user has provided an image of their pet. Act as an expert veterinarian. Visually analyze the pet's condition from the image. State the potential visible problems, how to care for/cure it, and general medical advice. Always add a disclaimer to consult a real vet.)`;
@@ -224,7 +224,7 @@ function Chatbot() {
     try {
       const formattedHistory = historyToGemini.map(({ role, text }) => ({ role, parts: [{ text }] }));
 
-      // If we have an image, inject inlineData into the LAST message (from the user)
+      
       if (imageBase64) {
         formattedHistory[formattedHistory.length - 1].parts.push({
           inlineData: {
@@ -234,7 +234,7 @@ function Chatbot() {
         });
       }
 
-      // Inject instructions into the final message query
+      
       formattedHistory[formattedHistory.length - 1].parts[0].text += systemInstruction;
 
       const requestOption = {
@@ -243,10 +243,10 @@ function Chatbot() {
         body: JSON.stringify({ contents: formattedHistory })
       };
 
-      // Call our API endpoint at /api/chats/generate
+      
       const response = await fetch('/api/chats/generate', requestOption);
 
-      // Check content type to avoid JSON parsing errors
+      
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         console.error('Response is not JSON:', contentType);
@@ -261,7 +261,7 @@ function Chatbot() {
 
       const apiResponseText = data.candidates[0].content.parts[0].text.trim();
 
-      // Finalize history with bot's response
+      
       const updatedHistory = [
         ...historyToGemini.map(msg => ({ ...msg, text: msg.text === "Thinking..." ? apiResponseText : msg.text })),
       ];
@@ -274,7 +274,7 @@ function Chatbot() {
 
       setChatHistory(updatedHistory);
 
-      // Save to database continuously
+      
       await saveOrUpdateChatInDB(updatedHistory, null, cloudinaryUrl);
 
     } catch (error) {
@@ -303,19 +303,19 @@ function Chatbot() {
     let mimeType = null;
     let currentImage = selectedImage;
 
-    // Reset image pickers locally but store for this request cycle
+    
     setSelectedImage(null);
     setPreviewImage(null);
 
     try {
-      // 1. If an image is selected, upload it to Cloudinary AND convert for Gemini
+      
       if (currentImage) {
         cloudinaryUrl = await uploadImageToCloudinary(currentImage);
         base64Data = await fileToBase64(currentImage);
         mimeType = currentImage.type;
       }
 
-      // 2. Append User Message
+      
       const userMessageObj = {
         role: "user",
         text: userMessage || "Analyze this image",
@@ -325,14 +325,14 @@ function Chatbot() {
       const updatedHistory = [...chatHistory, userMessageObj];
       setChatHistory(updatedHistory);
 
-      // 3. Save initial user message to DB
+      
       await saveOrUpdateChatInDB(updatedHistory, null, cloudinaryUrl);
 
-      // 4. Append 'Thinking...' placeholder
+      
       setTimeout(() => {
         setChatHistory(prev => [...prev, { role: "model", text: "Thinking..." }]);
 
-        // 5. Fire Gemini Request
+        
         const historyForGemini = [...updatedHistory];
         generateResponse(historyForGemini, base64Data, mimeType, cloudinaryUrl);
       }, 300);
@@ -346,8 +346,6 @@ function Chatbot() {
 
   return (
     <div className="flex h-[calc(100vh-100px)] md:h-[calc(100vh-80px)] w-full overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100">
-
-      {/* Sidebar - History */}
       <div className={`absolute md:relative inset-y-0 left-0 z-40 w-72 bg-white shadow-xl transition-all duration-300 ease-in-out flex flex-col ${isSidebarOpen ? 'translate-x-0 ml-0 md:shadow-none' : '-translate-x-full md:-ml-72'}`}>
         <div className="p-4 flex items-center justify-between border-b">
           <h2 className="font-bold text-[#1b3a34] flex items-center gap-2">
@@ -381,8 +379,8 @@ function Chatbot() {
                   <button
                     onClick={() => loadPreviousChat(chat)}
                     className={`w-full text-left truncate px-4 py-3 rounded-lg text-sm transition-all ${activeChatId === chat.id
-                        ? 'bg-[#1b3a34] text-[#fcf8ef] font-semibold'
-                        : 'text-gray-500 hover:bg-[#1b3a34] hover:text-[#fcf8ef]'
+                      ? 'bg-[#1b3a34] text-[#fcf8ef] font-semibold'
+                      : 'text-gray-500 hover:bg-[#1b3a34] hover:text-[#fcf8ef]'
                       }`}
                   >
                     {chat.chatName}
@@ -401,11 +399,7 @@ function Chatbot() {
           )}
         </div>
       </div>
-
-      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative h-full max-w-5xl mx-auto">
-
-        {/* Header */}
         <div className="p-4 bg-white/80 backdrop-blur-md border-b flex items-center justify-between z-10 sticky top-0">
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-gray-600 hover:text-gray-900 focus:outline-none bg-gray-100 p-1.5 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">
             <IoMenu size={28} />
@@ -418,15 +412,12 @@ function Chatbot() {
             <p className="text-xs text-gray-500 hidden sm:block">Ask questions or upload pet photos for instant AI Veterinary Analysis</p>
           </div>
 
-          <div className="w-8"></div> {/* Spacer for centering */}
+          <div className="w-8"></div> {}
         </div>
-
-        {/* Chat Body */}
         <div
           ref={ChatbodyRef}
           className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-4 bg-gray-50/30 w-full"
         >
-          {/* Greeting message if no history */}
           {chatHistory.length <= 1 && (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-50">
               <Image src="/logo.png" alt="Logo" width={100} height={100} />
@@ -435,7 +426,7 @@ function Chatbot() {
             </div>
           )}
 
-          {/* Messages */}
+          
           <div className="flex flex-col gap-4 w-full">
             {chatHistory.map((chat, index) => (
               <ChatMessage key={index} chat={chat} />
@@ -443,10 +434,10 @@ function Chatbot() {
           </div>
         </div>
 
-        {/* Input Area */}
+        
         <div className="bg-white border-t p-3 sm:p-4 rounded-t-3xl shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] z-20 sticky bottom-0">
 
-          {/* Image Preview Container */}
+          
           {previewImage && (
             <div className="relative inline-block mb-3 ml-2 group">
               <div className="border-4 border-[#1b3a34] rounded-xl overflow-hidden shadow-md">
@@ -463,7 +454,7 @@ function Chatbot() {
 
           <form onSubmit={handleSubmit} className="flex items-center gap-2 sm:gap-3">
 
-            {/* Image Upload Button */}
+            
             <label className={`cursor-pointer p-3 sm:p-4 rounded-full border border-gray-200 shadow-sm transition-all focus-within:ring-2 focus-within:ring-[#1b3a34] ${isUploading ? 'bg-gray-100 opacity-50' : 'bg-white hover:bg-[#1b3a34] text-[#1b3a34]'}`}>
               <FaCamera className="text-lg sm:text-xl" />
               <input
@@ -475,7 +466,7 @@ function Chatbot() {
               />
             </label>
 
-            {/* Text Input */}
+            
             <div className="relative flex-1">
               <input
                 type="text"
@@ -488,7 +479,7 @@ function Chatbot() {
                 className="w-full border-2 border-[#1b3a34]/30 hover:border-[#1b3a34]/60 transition-colors p-3 sm:p-4 rounded-full pl-5 pr-14 focus:outline-none focus:ring-2 focus:ring-[#1b3a34] focus:border-transparent disabled:bg-gray-50"
               />
 
-              {/* Send Button */}
+              
               <button
                 type="submit"
                 disabled={isUploading || (!inputValue.trim() && !selectedImage)}
@@ -504,9 +495,6 @@ function Chatbot() {
           </form>
         </div>
       </div>
-
-      {/* Fixed Home Button Overlay (moved slightly left to avoid clash) */}
-
     </div>
   );
 }

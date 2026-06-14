@@ -3,7 +3,7 @@ import { db } from '@/app/configs/db';
 import { chats } from '@/app/configs/schema';
 import { desc, eq } from 'drizzle-orm';
 
-// GET - Fetch all chats for a user
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -30,7 +30,7 @@ export async function GET(request) {
   }
 }
 
-// POST - Create a new chat
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -63,7 +63,7 @@ export async function POST(request) {
   }
 }
 
-// PUT - Update an existing chat (messages or name)
+
 export async function PUT(request) {
   try {
     const body = await request.json();
@@ -100,7 +100,7 @@ export async function PUT(request) {
   }
 }
 
-// DELETE - Delete a chat
+
 export async function DELETE(request) {
   try {
     const { searchParams } = new URL(request.url);

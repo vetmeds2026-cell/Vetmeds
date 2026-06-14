@@ -12,7 +12,6 @@ export default function Page() {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Logo for mobile view */}
       <div className="md:hidden absolute top-4 left-4 z-10 flex items-center">
         <Link href="/">
           <div className="flex items-center bg-white/80 p-2 rounded-lg backdrop-blur-sm shadow-md">
@@ -21,14 +20,9 @@ export default function Page() {
           </div>
         </Link>
       </div>
-
-      {/* Sign Up Form Container */}
       <div className='flex items-center justify-center p-6 sm:p-8 md:p-10 bg-white/70 backdrop-blur-sm
         min-h-screen w-full md:w-[50%] md:rounded-br-[100px] lg:rounded-br-[150px]'>
         <div className="max-w-md w-full">
-          {/* Logo for desktop view */}
-
-
           <SignUp />
 
           <div className="mt-6 text-center">
@@ -36,8 +30,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-
-      {/* Decorative right side - only visible on larger screens */}
       <div className='hidden md:block md:w-[50%]'></div>
     </div>
   )

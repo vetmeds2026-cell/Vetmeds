@@ -3,7 +3,7 @@ import { db } from '@/app/configs/db';
 import { users, penalties, collectedPoints } from '@/app/configs/schema';
 import { eq } from 'drizzle-orm';
 
-// POST: Block user
+
 export async function POST(request) {
   try {
     const { email, duration, reason } = await request.json();
@@ -44,7 +44,7 @@ export async function POST(request) {
   }
 }
 
-// PATCH: Unblock user with penalty
+
 export async function PATCH(request) {
   try {
     const { email, doctorEmail, doctorName } = await request.json();
@@ -53,7 +53,7 @@ export async function PATCH(request) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Fetch current user data
+    
     const existingUsers = await db.select().from(users).where(eq(users.email, email));
     if (!existingUsers.length) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
@@ -62,10 +62,10 @@ export async function PATCH(request) {
     const currentUser = existingUsers[0];
     const currentPoints = currentUser.points || 0;
     
-    // Calculate penalty: user points kept at 10, rest taken as fine
+    
     const penaltyAmount = Math.max(0, currentPoints - 10);
 
-    // 1. Update user: reset points to 10 and lift block
+    
     await db.update(users)
       .set({ 
         points: 10, 
@@ -76,7 +76,7 @@ export async function PATCH(request) {
       })
       .where(eq(users.email, email));
 
-    // 2. Log penalty in penalties table
+    
     await db.insert(penalties).values({
       userEmail: email,
       userName: currentUser.name,
@@ -86,7 +86,7 @@ export async function PATCH(request) {
       reason: 'Account unblocked; remaining points collected as fine.',
     });
 
-    // 3. Log penalty in collected_points table
+    
     await db.insert(collectedPoints).values({
       userEmail: email,
       userName: currentUser.name,

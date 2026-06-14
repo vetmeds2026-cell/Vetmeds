@@ -122,7 +122,7 @@
   }
 }
 
-/* Custom Navigation Loader Gradient */
+
 #nprogress .bar {
   background: linear-gradient(to right, var(--primary), var(--background), var(--primary), var(--background), var(--primary)) !important;
   background-size: 200% 100% !important;

@@ -3,7 +3,7 @@ import { db } from '@/app/configs/db';
 import { users } from '@/app/configs/schema';
 import { eq, sql } from 'drizzle-orm';
 
-// GET - Get user points (or initialize if not exist)
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -17,13 +17,13 @@ export async function GET(request) {
       );
     }
     
-    // Check if user exists
+    
     let existingUser = await db.select().from(users).where(eq(users.email, email));
     
     if (existingUser.length === 0) {
-      // Create user with default 10 points
+      
       const newUser = await db.insert(users).values({
-        id: email, // Using email as ID fallback
+        id: email, 
         email: email,
         name: name,
         points: 10
@@ -42,7 +42,7 @@ export async function GET(request) {
   }
 }
 
-// POST - Add or subtract points
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -55,11 +55,11 @@ export async function POST(request) {
       );
     }
 
-    // Check if user exists
+    
     let existingUser = await db.select().from(users).where(eq(users.email, email));
     
     if (existingUser.length === 0) {
-      // Create user with 10 + pointsToAdd
+      
       const newUser = await db.insert(users).values({
         id: email,
         email: email,
@@ -73,7 +73,7 @@ export async function POST(request) {
         data: { points: newUser[0].points } 
       });
     } else {
-      // Update existing user points
+      
       const newPoints = Math.max(0, existingUser[0].points + pointsToAdd);
       
       const updatedUser = await db.update(users)

@@ -3,11 +3,7 @@
 import React from "react";
 import Image from "next/image";
 
-/**
- * Global Error Boundary
- * This handles errors that occur in the root layout (where ClerkProvider lives)
- * It must define its own html and body tags.
- */
+
 export default function GlobalError({ error, reset }) {
   return (
     <html>

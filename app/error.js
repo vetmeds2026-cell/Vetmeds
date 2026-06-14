@@ -6,13 +6,12 @@ import { motion } from "framer-motion";
 
 export default function Error({ error, reset }) {
   useEffect(() => {
-    // Log the error to an error reporting service
+    
     console.error("Application Error:", error);
   }, [error]);
 
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-[#1b3a34]">
-      {/* Background GIF */}
       <div className="absolute inset-0 opacity-40">
         <img
           src="/waiting.gif"
@@ -20,8 +19,6 @@ export default function Error({ error, reset }) {
           className="h-full w-full object-cover"
         />
       </div>
-
-      {/* Content */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

@@ -25,10 +25,10 @@ function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real application, you would send this data to your backend
+    
     setIsSubmitted(true);
 
-    // Reset form after submission
+    
     setTimeout(() => {
       setFormData({
         name: '',
@@ -45,7 +45,7 @@ function Contact() {
 
   const sendEmail = async (e) => {
     e.preventDefault();
-    setIsSubmitted(true); // Disable button
+    setIsSubmitted(true); 
     setStatusMessage('Sending your message...');
 
     try {
@@ -83,7 +83,6 @@ function Contact() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-      {/* Page Title */}
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1b3a34] mb-4">Contact Us</h1>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -92,7 +91,6 @@ function Contact() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-        {/* Contact Form */}
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 sm:p-8">
           <form ref={form} onSubmit={sendEmail} className="space-y-6">
             <h2 className="text-2xl font-bold text-[#1b3a34] mb-6">Send Us a Message</h2>
@@ -182,8 +180,6 @@ function Contact() {
             <Image src={'/pets3.png'} alt="dog" width={1000} height={1000} className="w-full" />
           </div>
         </div>
-
-        {/* Contact Information */}
         <div className="space-y-6">
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-[#1b3a34] mb-6">Contact Information</h2>
@@ -260,8 +256,6 @@ function Contact() {
           </div>
         </div>
       </div>
-
-      {/* FAQ Section */}
       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 sm:p-8 mb-12">
         <h2 className="text-2xl font-bold text-[#1b3a34] mb-6 text-center">Frequently Asked Questions</h2>
 

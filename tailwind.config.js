@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+
 module.exports = {
     content: [
       './pages/**/*.{js,ts,jsx,tsx}',
@@ -27,9 +27,9 @@ module.exports = {
         },
         colors: {
           primary: {
-            DEFAULT: '#1D4ED8', // Main primary color (blue-700)
-            light: '#3B82F6',   // Optional light variant (blue-500)
-            dark: '#1E40AF',    // Optional dark variant (blue-800)
+            DEFAULT: '#1D4ED8', 
+            light: '#3B82F6',   
+            dark: '#1E40AF',    
           },
         },
       },

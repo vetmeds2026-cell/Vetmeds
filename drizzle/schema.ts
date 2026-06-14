@@ -63,7 +63,7 @@ export const emergencySos = pgTable('emergency_sos', {
 	userName: varchar('user_name').notNull(),
 	description: text('description').notNull(),
 	imageUrl: varchar('image_url'),
-	status: varchar('status').default('pending').notNull(), // pending, responding, completed, cancelled
+	status: varchar('status').default('pending').notNull(), 
 	latitude: varchar('latitude'),
 	longitude: varchar('longitude'),
 	address: text('address'),
@@ -79,7 +79,7 @@ export const collectedPoints = pgTable('collected_points', {
 	doctorName: varchar('doctor_name').notNull(),
 	points: integer('points').notNull(),
 	petIssue: text('pet_issue').notNull(),
-	status: varchar('status').default('collected').notNull(), // collected, transferred
+	status: varchar('status').default('collected').notNull(), 
 	createdAt: varchar('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 

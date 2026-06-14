@@ -11,7 +11,6 @@ export default function Loading() {
         </h1>
       </div>
       <div className="w-full max-w-4xl space-y-4">
-        {/* Skeleton lines for table */}
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="h-16 w-full bg-gray-200 rounded-xl animate-pulse" />
         ))}

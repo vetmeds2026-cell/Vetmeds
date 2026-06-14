@@ -59,10 +59,10 @@ function AboutUs() {
   ];
 
   const stats = [
-    { label: "Pets Helped", value: "10k+", icon: <Heart className="w-5 h-5" /> },
-    { label: "Expert Vets", value: "50+", icon: <Stethoscope className="w-5 h-5" /> },
+    { label: "Pets Helped", value: "500+", icon: <Heart className="w-5 h-5" /> },
+    { label: "Expert Vets", value: "10+", icon: <Stethoscope className="w-5 h-5" /> },
     { label: "Availability", value: "24/7", icon: <History className="w-5 h-5" /> },
-    { label: "Success Rate", value: "99%", icon: <Award className="w-5 h-5" /> },
+    { label: "Success Rate", value: "98%", icon: <Award className="w-5 h-5" /> },
   ];
 
   return (

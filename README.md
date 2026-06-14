@@ -11,7 +11,7 @@
 | 🐶 **Pet Profiles** | Create and manage detailed health profiles for your pets |
 | 📅 **Appointment Booking** | Book appointments with specialized veterinarians and receive PDF receipts |
 | 🤖 **PawBot AI** | Gemini-powered AI chatbot for instant pet health guidance |
-| 🚨 **Emergency** | Send real-time emergency alerts with location, description, and photos directly to doctors |
+| 🚨 **Emergency** | Send real-time emergency alerts with location, description, and photos directly to doctors and Animal Helping Ngos  |
 | 🗺️ **Interactive Maps** | Select your exact location via an interactive map for emergency precision |
 | 📧 **Email Notifications** | Automated email alerts to doctors on new bookings and status updates |
 | 🏥 **Doctor Dashboard** | Dedicated portal for vets to manage appointments, prescribe medicines, and generate PDFs |
